@@ -47,4 +47,4 @@ const { state, dispatch } = useAppContext();
 );
 }
 
-export default PeliculasAccion;
+export default PeliculasAccion; 
