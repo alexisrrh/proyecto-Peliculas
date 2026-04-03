@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAppContext } from "../context/AppContext";  
 function Favoritos() {
-const { state } = useAppContext();
+const { state, dispatch } = useAppContext();
 
   useEffect(() => {
     console.log("FAVORITOS EN LA PAGINA:", state.Favoritos);
@@ -39,9 +39,7 @@ return (
 
                 <i
                   className="fa-regular fa-trash-can text-red-300  p-2 cursor-pointer"
-                  onClick={() =>
-                    dispatch({ type: "set_Favoritos", payload: item })
-                  }
+                  onClick={() => dispatch({ type: "remove_Favoritos", payload: item })}
                 ></i>
               </div>
               <div>

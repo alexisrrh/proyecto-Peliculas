@@ -18,25 +18,19 @@ const PeliculasPopulares = () => {
 
   return (
     <div className="relative mx-auto px-4 py-2">
-      <button
-        onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-3 py-2 text-white focus:outline-none"
+      <button onClick={() => scroll("left")} className=" absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full  bg-black/60 px-3 py-2 text-white focus:outline-none"
       >
-        <i className="fa-solid fa-angles-left"></i>
+        <i className="fa-solid fa-angles-left "></i>
       </button>
 
       <div ref={scrollRef} className="listaP overflow-visible">
         {state.Populares.map((item) => (
           <div
             key={item.id}
-            className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/80 transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
+            className="min-w-[240px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/80 transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
             <div className="overflow-hidden">
-              <img
-                src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                alt={item.title}
-                className="h-[340px] w-full object-cover transition duration-500"
-              />
+              <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}alt={item.title} className="h-[300px] w-full object-cover transition duration-500"/>
             </div>
 
             <div className="p-3">

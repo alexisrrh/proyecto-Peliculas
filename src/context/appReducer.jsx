@@ -51,6 +51,12 @@ export const appReducer = (state, action) => {
         Favoritos: [...state.Favoritos, action.payload],
       }};
 
+      case "remove_Favoritos":
+        return {
+          ...state,
+          Favoritos: state.Favoritos.filter((item) => item.id !== action.payload.id),
+        };
+
     default:
       return state;
   };

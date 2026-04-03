@@ -1,8 +1,6 @@
 .listaP{
 
 
-  background-color: #000000;
-background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
 
   display: flex;
   flex-direction: row;
@@ -10,8 +8,10 @@ background-image: url("https://www.transparenttextures.com/patterns/asfalt-light
   overflow-x:auto;
   overflow-y: auto;
    scroll-behavior: smooth;
-  gap: 16px;
-  padding: 20px;
+  gap: 20px;
+  padding: 35px;
+
+ 
 }
 .listaP::-webkit-scrollbar {
   display: none;
