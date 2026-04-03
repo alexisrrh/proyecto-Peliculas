@@ -1,12 +1,20 @@
-import React from "react";  
+import React, { useEffect } from "react";
 import { useAppContext } from "../context/AppContext";  
 function Favoritos() {
 const { state } = useAppContext();
 
+  useEffect(() => {
+    console.log("FAVORITOS EN LA PAGINA:", state.Favoritos);
+  }, [state.Favoritos]);
+
+
+
+
+
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
-        {state.favoritos?.map((item) => (
+        {state.Favoritos?.map((item) => (
           <div key={item.id} className="col-12 col-md-6 col-lg-4 mb-4">
             <div className="card bg-dark text-white h-100">
               <img

@@ -48,7 +48,7 @@ const { state, dispatch } = useAppContext();
                 {item.title}
               </h3>
               
-   <i className="fa-regular fa-heart text-red-500 pt-2" onClick={dispatch({ type: "set_Favoritos", payload: {item} })}></i></div>
+   <i className="fa-regular fa-heart text-red-500 pt-2" onClick={() => { dispatch({ type: "set_Favoritos", payload: item });}}></i></div>
    <div>
               <p className="mt-3 text-sm leading-6 text-zinc-400 line-clamp-4">
                 {item.overview}

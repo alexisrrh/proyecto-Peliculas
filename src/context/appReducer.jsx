@@ -11,12 +11,7 @@ export const initialState = {
 
 export const appReducer = (state, action) => {
   switch (action.type) {
-    case "set_favoritos":
-      return {
-        ...state,
-        favoritos: action.payload,
-      };
-
+    
     case "set_Populares":
       return {
         ...state,
@@ -46,11 +41,17 @@ export const appReducer = (state, action) => {
       };
 
        case "set_Favoritos":
+        const existe= state.Favoritos.find((item)=> item.id === action.payload.id);
+        if (existe) {
+          return state;
+        }
+        else {
       return {
         ...state,
         Favoritos: [...state.Favoritos, action.payload],
-      };
+      }};
+
     default:
       return state;
-  }
+  };
 };
