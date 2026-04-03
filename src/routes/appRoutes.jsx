@@ -9,7 +9,7 @@ export const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/categorias" element={<Categorias />} />
        <Route path="/favoritos" element={<Favoritos />} />
-       <Route path="/favoritos/:id" element={<Favoritos />} />
+
     </Routes>
   );
 };

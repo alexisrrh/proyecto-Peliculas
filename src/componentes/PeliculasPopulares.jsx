@@ -1,7 +1,7 @@
 
 import { useAppContext } from "../context/AppContext";
 import React, { useRef } from "react";
-
+import { Link } from "react-router-dom";
 
 const PeliculasPopulares = () => {
 
@@ -43,15 +43,18 @@ const { state, dispatch } = useAppContext();
               />
             </div>
 
-            <div className="p-5">
+            <div className="titulo p-2">
               <h3 className="text-xl font-semibold text-white">
                 {item.title}
               </h3>
-
+              
+   <i className="fa-regular fa-heart text-red-500 pt-2" onClick={() => { dispatch({ type: "set_Favoritos", payload: item });}}></i></div>
+   <div>
               <p className="mt-3 text-sm leading-6 text-zinc-400 line-clamp-4">
                 {item.overview}
               </p>
             </div>
+        
           </div>
         ))}
       </div>
@@ -60,7 +63,9 @@ const { state, dispatch } = useAppContext();
         onClick={() => scroll("right")}
         className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/60 text-white px-3 py-2 rounded-full"
       >
-      <i className="fa-solid fa-angles-right"></i>
+       
+     <i className="fa-solid fa-angles-right"></i>
+    
       </button>
     </div>
   );
