@@ -16,7 +16,7 @@ const Navbar = () => {
 
   return (
     <Disclosure as="nav" className="sticky top-0 z-50 bg-black/70 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+      <div className="mx-auto px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-20 items-center justify-between">
           
           {/* 1. BOTÓN MÓVIL */}
