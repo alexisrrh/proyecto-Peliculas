@@ -1,6 +1,7 @@
 
 import React from "react";    
 import { useAppContext } from "../context/AppContext";
+import { useRef } from "react";
 
 
 
@@ -31,7 +32,7 @@ const { state, dispatch } = useAppContext();
       </button>
 
       <div ref={scrollRef} className="listaP">
-        {state.Populares.map((item) => (
+        {state.Accion.map((item) => (
           <div
             key={item.id}
             className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:ring-red-500/40"
