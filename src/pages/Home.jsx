@@ -80,15 +80,15 @@ useEffect(() => {
  
     return (
         <div>
-       <h1 className="text-3xl font-bold text-center text-black mb-8">Películas Populares</h1>
+       <h1 className="text-3xl font-bold text-start text-white ">Películas Populares</h1>
  <PeliculasPopulares /> 
- <h1 className="text-3xl font-bold text-center text-black mb-8">Películas de Acción</h1>
+ <h1 className="text-3xl font-bold text-start text-white mb-8">Películas de Acción</h1>
  <PeliculasAccion />
- <h1 className="text-3xl font-bold text-center text-black mb-8">Películas de Comedia</h1>
+ <h1 className="text-3xl font-bold text-start text-white mb-8">Películas de Comedia</h1>
  <PeliculasComedia />
- <h1 className="text-3xl font-bold text-center text-black mb-8">Películas de Terror</h1>
+ <h1 className="text-3xl font-bold text-start text-white mb-8">Películas de Terror</h1>
  <PeliculasTerror />
- <h1 className="text-3xl font-bold text-center text-black mb-8">Películas Animadas</h1>
+ <h1 className="text-3xl font-bold text-start text-white mb-8">Películas Animadas</h1>
  <PeliculasAnimadas />
  </div>  
   );

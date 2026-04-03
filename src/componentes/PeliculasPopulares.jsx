@@ -22,11 +22,11 @@ const { state, dispatch } = useAppContext();
   };
 
   return (
-    <div className="relative mx-auto px-4 py-8">
+    <div className="relative mx-auto px-4 py-2">
       <button
         onClick={() => scroll("left")}
        className="botonDerecho absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/60 text-white px-3 py-2 rounded-full outline-none focus:outline-none">
-        ◀
+<i className="fa-solid fa-angles-left"></i>
       </button>
 
       <div ref={scrollRef} className="listaP">
@@ -39,7 +39,7 @@ const { state, dispatch } = useAppContext();
               <img
                 src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                 alt={item.title}
-                className="h-56 w-full object-cover transition duration-500"
+                className="h-85 w-full object-cover transition duration-500"
               />
             </div>
 
@@ -60,7 +60,7 @@ const { state, dispatch } = useAppContext();
         onClick={() => scroll("right")}
         className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/60 text-white px-3 py-2 rounded-full"
       >
-        ▶
+      <i className="fa-solid fa-angles-right"></i>
       </button>
     </div>
   );

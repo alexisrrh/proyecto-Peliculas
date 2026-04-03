@@ -1,6 +1,9 @@
 .listaP{
 
-  background-color: black;
+
+  background-color: #000000;
+background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
+
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -20,7 +23,7 @@
 }
 
 .listaP > div {
-  min-width: 200px;
+  min-width: 250px;
  
   flex-shrink: 60;
 }
@@ -29,4 +32,11 @@
 
 background-color: rgba(0, 0, 0, 0.863);
   transform: translateY(-50%);
+}
+
+body{
+
+  background-color: #000000;
+background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
+
 }
