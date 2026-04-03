@@ -34,7 +34,7 @@ const { state, dispatch } = useAppContext();
         {state.Terror.map((item) => (
           <div
             key={item.id}
-            className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:ring-red-500/40"
+            className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/80 transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
             <div className="overflow-hidden">
               <img
