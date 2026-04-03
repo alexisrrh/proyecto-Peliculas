@@ -55,7 +55,7 @@ const Navbar = () => {
                               {categories.map((cat) => (
                                 <Link
                                   key={cat}
-                                  to={`/categorias/${cat.toLowerCase()}`}
+                                  to={`/${cat.toLowerCase()}`}
                                   className="text-gray-400 hover:text-white text-sm font-medium whitespace-nowrap transition-colors"
                                 >
                                   {cat}
@@ -91,8 +91,8 @@ const Navbar = () => {
               />
             </div>
           </div>
-        </div> {/* <-- AQUÍ FALTABA CERRAR ESTE DIV (justify-between) */}
-      </div> {/* <-- AQUÍ FALTABA CERRAR ESTE DIV (max-w-7xl) */}
+        </div> 
+      </div> 
 
       {/* PANEL MÓVIL */}
       <DisclosurePanel className="sm:hidden bg-black/90">
