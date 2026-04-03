@@ -43,12 +43,13 @@ const { state, dispatch } = useAppContext();
                 className="h-85 w-full object-cover transition duration-500"
               />
             </div>
-
-            <div className="p-5">
+<div className="titulo p-2">
               <h3 className="text-xl font-semibold text-white">
                 {item.title}
               </h3>
-
+              
+   <i className="fa-regular fa-heart text-red-500 pt-2" onClick={() => { dispatch({ type: "set_Favoritos", payload: item });}}></i></div>
+   <div>
               <p className="mt-3 text-sm leading-6 text-zinc-400 line-clamp-4">
                 {item.overview}
               </p>
