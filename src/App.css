@@ -1,0 +1,32 @@
+.listaP{
+
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  overflow-x:auto;
+  overflow-y: auto;
+   scroll-behavior: smooth;
+  gap: 16px;
+  padding: 20px;
+}
+.listaP::-webkit-scrollbar {
+  display: none;
+}
+
+.listaP {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.listaP > div {
+  min-width: 200px;
+ 
+  flex-shrink: 60;
+}
+
+.botonDerecho {
+
+background-color: rgba(0, 0, 0, 0.863);
+  transform: translateY(-50%);
+}

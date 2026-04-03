@@ -19,9 +19,9 @@ const { state, dispatch } = useAppContext();
   <div className="container mx-auto px-4 py-8">
     <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       
-      {state.Terror.map((item, index) => (
+      {state.Terror.map((item) => (
         <div
-          key={item.id || index}
+          key={item.id}
           className="group max-w-sm overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:ring-red-500/40"
         >
           <div className="overflow-hidden">
