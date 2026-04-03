@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import logo from '../assets/logo1.png'
+import { Link } from "react-router-dom";
 
 const navigation = [
   { name: 'Inicio', href: '/', current: true },
@@ -52,13 +53,13 @@ const Navbar = () => {
                           <div className="bg-black/95 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-2xl">
                             <div className="flex justify-center space-x-6">
                               {categories.map((cat) => (
-                                <a
+                                <Link
                                   key={cat}
-                                  href={`/categorias/${cat.toLowerCase()}`}
+                                  to={`/categorias/${cat.toLowerCase()}`}
                                   className="text-gray-400 hover:text-white text-sm font-medium whitespace-nowrap transition-colors"
                                 >
                                   {cat}
-                                </a>
+                                </Link>
                               ))}
                             </div>
                           </div>
@@ -69,9 +70,9 @@ const Navbar = () => {
                   );
                 }
                 return (
-                  <a key={item.name} href={item.href} className="text-white hover:text-gray-300 text-xl font-medium">
+                  <Link key={item.name} to={item.href} className="text-white hover:text-gray-300 text-xl font-medium">
                     {item.name}
-                  </a>
+                  </Link>
                 );
               })}
             </div>
