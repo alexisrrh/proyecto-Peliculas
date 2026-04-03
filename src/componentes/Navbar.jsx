@@ -1,40 +1,79 @@
-import react from 'react'
-import { Link } from "react-router-dom";
+import React from 'react'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import logo from '../assets/logo1.png'
+
+const navigation = [
+  { name: 'Inicio', href: '/', current: true },
+  { name: 'Categorías', href: '/categorias', current: false },
+  { name: 'Favoritos', href: '/favoritos', current: false },
+  { name: 'Perfil', href: '#', current: false },
+]
+
 const Navbar = () => {
   return (
-    <nav className="w-full bg-gray-800 text-white">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <Disclosure as="nav" className="sticky top-0 z-50 bg-black/70 backdrop-blur-md">
+      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div className="relative flex h-20 items-center justify-between">
+          
+          {/* 1. BOTÓN MÓVIL */}
+          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white">
+              <Bars3Icon className="block size-6 group-data-open:hidden" />
+              <XMarkIcon className="hidden size-6 group-data-open:block" />
+            </DisclosureButton>
+          </div>
 
-        {/* LOGO */}
-        <div className="text-lg font-semibold">
-          LOGO
+          {/* 2. LADO IZQUIERDO: LOGO Y LINKS */}
+          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div className="flex shrink-0 items-center">
+              <img alt="Ipanema Logo" src={logo} className="h-25 w-auto" />
+            </div>
+            
+            {/* Links Desktop */}
+            <div className="hidden sm:ml-10 sm:flex items-center space-x-8">
+              {navigation.map((item) => (
+                <a key={item.name} href={item.href} className="text-white hover:text-gray-300 text-xl font-medium">
+                  {item.name}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. LADO DERECHO: BUSCADOR (Separado de los links) */}
+          <div className="hidden sm:flex items-center ml-4">
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <MagnifyingGlassIcon className="size-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar películas..."
+                className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-inset ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm"
+              />
+            </div>
+          </div>
+
         </div>
-
-        {/* LINKS */}
-        <div className="hidden md:flex gap-6">
-          <Link to="/" className="px-3 py-2 rounded-md bg-gray-900">
-            Inicio
-          </Link>
-          <Link to="/categorias" className="px-3 py-2 rounded-md hover:bg-white/10">
-           Categorias
-          </Link>
-          <Link to="/favoritos" className="px-3 py-2 rounded-md hover:bg-white/10">
-            Favoritos
-          </Link>
-        </div>
-
-        {/* BOTÓN MÓVIL */}
-        <button className="md:hidden text-xl">
-          ☰
-        </button>
-
       </div>
-    </nav>
-  );
-};
 
+      {/* PANEL MÓVIL */}
+      <DisclosurePanel className="sm:hidden bg-black/90">
+        <div className="space-y-1 px-2 pt-2 pb-3">
+          {navigation.map((item) => (
+            <DisclosureButton
+              key={item.name}
+              as="a"
+              href={item.href}
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white"
+            >
+              {item.name}
+            </DisclosureButton>
+          ))}
+        </div>
+      </DisclosurePanel>
+    </Disclosure>
+  )
+}
 
-
-
-
-    export default Navbar;  
+export default Navbar
