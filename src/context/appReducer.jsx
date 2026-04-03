@@ -45,6 +45,11 @@ export const appReducer = (state, action) => {
         Animadas: action.payload,
       };
 
+       case "set_Favoritos":
+      return {
+        ...state,
+        Favoritos: [...state.Favoritos, action.payload],
+      };
     default:
       return state;
   }
