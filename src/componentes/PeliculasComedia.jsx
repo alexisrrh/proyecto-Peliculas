@@ -35,7 +35,7 @@ const { state, dispatch } = useAppContext();
         {state.Comedia.map((item) => (
           <div
             key={item.id}
-            className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:ring-red-500/40"
+            className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/80 transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
             <div className="overflow-hidden">
               <img
@@ -45,11 +45,13 @@ const { state, dispatch } = useAppContext();
               />
             </div>
 
-            <div className="p-5">
+           <div className="titulo p-2">
               <h3 className="text-xl font-semibold text-white">
                 {item.title}
               </h3>
-
+              
+   <i className="fa-regular fa-heart text-red-500 pt-2" onClick={() => { dispatch({ type: "set_Favoritos", payload: item });}}></i></div>
+   <div>
               <p className="mt-3 text-sm leading-6 text-zinc-400 line-clamp-4">
                 {item.overview}
               </p>
