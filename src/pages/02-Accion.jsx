@@ -1,42 +1,48 @@
-import React from 'react'
-import { appReducer } from '../context/appReducer';
+import React from 'react';
+import { useAppContext } from '../context/AppContext';
 
-const Accion = () => {
-    const {state, dispatch} = useAppContext();
+const Accion1 = () => {
+  const { state, dispatch } = useAppContext();
+
   return (
-    <div className="relative mx-auto px-4 py-2">
-      <div ref={scrollRef} className="listaP">
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      {/* Grid responsivo: 1 columna en móvil, 2 en tablet, 4 en desktop */}
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {state.Accion.map((item) => (
           <div
             key={item.id}
-            className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:ring-red-500/40"
+            className="group relative flex flex-col overflow-hidden rounded-xl bg-zinc-900 shadow-xl ring-1 ring-white/10 transition-all hover:ring-red-500/50"
           >
-            <div className="overflow-hidden">
+            {/* Contenedor de Imagen con ratio de aspecto de póster */}
+            <div className="aspect-[2/3] overflow-hidden">
               <img
                 src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                 alt={item.title}
-                className="h-85 w-full object-cover transition duration-500"
+                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
+              {/* Botón de Favorito flotante sobre la imagen */}
+              <button 
+                onClick={() => dispatch({ type: "set_Favoritos", payload: item })}
+                className="absolute top-3 right-3 z-10 rounded-full bg-black/60 p-2 backdrop-blur-md transition hover:bg-red-500/20"
+              >
+                <i className="fa-regular fa-heart text-xl text-red-500"></i>
+              </button>
             </div>
 
-            <div className="titulo p-2">
-              <h3 className="text-xl font-semibold text-white">
+            {/* Contenido de Texto */}
+            <div className="flex flex-1 flex-col p-4">
+              <h3 className="line-clamp-1 text-lg font-bold text-white">
                 {item.title}
               </h3>
-              
-   <i className="fa-regular fa-heart text-red-500 pt-2" onClick={() => { dispatch({ type: "set_Favoritos", payload: item });}}></i></div>
-   <div>
-              <p className="mt-3 text-sm leading-6 text-zinc-400 line-clamp-4">
+              <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-400">
                 {item.overview}
               </p>
             </div>
-        
           </div>
         ))}
       </div>
-
     </div>
   );
-}
+};
 
-export default Accion;
+export default Accion1;
