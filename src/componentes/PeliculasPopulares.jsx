@@ -15,10 +15,10 @@ const PeliculasPopulares = () => {
       });
     }
   };
-
+ 
   return (
-    <div className="relative mx-auto px-4 py-2">
-      <button onClick={() => scroll("left")} className=" absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full  bg-black/60 px-3 py-2 text-white focus:outline-none"
+    <div className="relative mx-auto ">
+      <button onClick={() => scroll("left")} className=" m-5 absolute left-0 top-1/2 z-50 -translate-y-1/2 rounded-full  bg-black/60 px-3 py-2 text-white focus:outline-none"
       >
         <i className="fa-solid fa-angles-left "></i>
       </button>
@@ -34,17 +34,13 @@ const PeliculasPopulares = () => {
             </div>
 
             <div className="p-3">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-3 p-2">
                 <h3 className="text-xl font-semibold text-white line-clamp-2">
                   {item.title}
                 </h3>
 
-                <i
-                  className="fa-regular fa-heart cursor-pointer pt-1 text-red-500"
-                  onClick={() =>
-                    dispatch({ type: "set_Favoritos", payload: item })
-                  }
-                ></i>
+                <i className={`fa-solid fa-heart cursor-pointer transition transform hover:scale-150 pt-2  ${ state.Favoritos.find((fav) => fav.id === item.id) ?  "text-red-500 scale-110" : "text-white"}`}
+              onClick={() => dispatch({ type: "set_Favoritos", payload: item })}  ></i>
               </div>
 
               <p className="mt-3 text-sm leading-6 text-zinc-400 line-clamp-4">
@@ -57,7 +53,7 @@ const PeliculasPopulares = () => {
 
       <button
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-3 py-2 text-white focus:outline-none"
+        className="absolute right-0 top-1/2 z-50 m-5 -translate-y-1/2 rounded-full bg-black/60 px-3 py-2 text-white focus:outline-none"
       >
         <i className="fa-solid fa-angles-right"></i>
       </button>
