@@ -25,7 +25,7 @@ const Animadas = () => {
                 onClick={() => dispatch({ type: "set_Favoritos", payload: item })}
                 className="absolute top-3 right-3 z-10 rounded-full bg-black/60 p-2 backdrop-blur-md transition hover:bg-red-500/20"
               >
-                <i className="fa-regular fa-heart text-xl text-red-500"></i>
+                <i className={` text-xl ${state.Favoritos.find((fav) => fav.id === item.id) ? "fa-solid fa-heart text-red-500" : "fa-regular fa-heart text-white"}`}></i>
               </button>
             </div>
 

@@ -51,6 +51,9 @@ export const appReducer = (state, action) => {
         Favoritos: [...state.Favoritos, action.payload],
       }};
 
+
+    
+
       case "remove_Favoritos":
         return {
           ...state,

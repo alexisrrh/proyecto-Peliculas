@@ -24,14 +24,14 @@ const { state, dispatch } = useAppContext();
   };
 
   return (
-    <div className="relative mx-auto px-4 py-2">
+    <div className="relative mx-auto ">
       <button
         onClick={() => scroll("left")}
-       className="botonDerecho absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/60 text-white px-3 py-2 rounded-full outline-none focus:outline-none">
+       className="botonDerecho absolute left-0 top-1/2 m-5 -translate-y-1/2 z-50 bg-black/60 text-white px-3 py-2 rounded-full outline-none focus:outline-none">
        <i className="fa-solid fa-angles-left"></i>
       </button>
 
-      <div ref={scrollRef} className="listaP">
+      <div ref={scrollRef} className="listaP overflow-visible">
         {state.Accion.map((item) => (
           <div
             key={item.id}
@@ -45,12 +45,13 @@ const { state, dispatch } = useAppContext();
               />
             </div>
 
-           <div className="titulo p-2">
+           <div className="flex items-start justify-between gap-3 p-2">
               <h3 className="text-xl font-semibold text-white">
                 {item.title}
               </h3>
               
-   <i className="fa-regular fa-heart text-red-500 pt-2" onClick={() => { dispatch({ type: "set_Favoritos", payload: item });}}></i></div>
+   <i className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${state.Favoritos.find((fav)=> fav.id === item.id) ? "text-red-500 scale-110" : "text-white"}`} 
+   onClick={() => { dispatch({ type: "set_Favoritos", payload: item });}}></i></div>
    <div>
               <p className="mt-3 text-sm leading-6 text-zinc-400 line-clamp-4">
                 {item.overview}
@@ -62,7 +63,7 @@ const { state, dispatch } = useAppContext();
 
       <button
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/60 text-white px-3 py-2 rounded-full"
+        className="absolute right-0 top-1/2 m-5 -translate-y-1/2 z-50 bg-black/60 text-white px-3 py-2 rounded-full"
       >
      <i className="fa-solid fa-angles-right"></i>
       </button>
