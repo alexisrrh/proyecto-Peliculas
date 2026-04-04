@@ -77,6 +77,11 @@ export const AppProvider = ({ children }) => {
     peliculas();
   }, []);
 
+
+  useEffect(() => {
+    localStorage.setItem("favoritos", JSON.stringify(state.Favoritos));
+  }, [state.Favoritos]);
+
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}

@@ -1,6 +1,6 @@
 export const initialState = {
   Populares: [],
-  Favoritos: [],
+  Favoritos: JSON.parse(localStorage.getItem("favoritos")) || [],
   Accion: [],
   Comedia:[],
   Terror:[],
