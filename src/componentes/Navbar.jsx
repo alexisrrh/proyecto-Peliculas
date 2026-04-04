@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import logo from '../assets/logo1.png'
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const navigation = [
   { name: 'Inicio', href: '/', current: true },
@@ -13,7 +13,10 @@ const navigation = [
 
 const Navbar = () => {
   const [showCategories, setShowCategories] = useState(false);
+const location = useLocation(); // Detecta la ruta actual
   const categories = ["Populares", "Accion", "Terror", "Comedia", "Animadas"];
+
+const isActive = (path) => location.pathname === path;
 
   return (
     <Disclosure as="nav" className="sticky top-0 z-50 bg-black/70 backdrop-blur-md">
@@ -35,31 +38,40 @@ const Navbar = () => {
             </div>
 
             <div className="hidden sm:ml-10 sm:flex items-center space-x-8">
-              {navigation.map((item) => {
-                if (item.name === 'Categorías') {
-                  return (
-                    <div key={item.name} className="relative flex items-center">
-                      <button
-                        onClick={() => setShowCategories(!showCategories)}
-                        className={`text-xl font-medium transition-colors ${
-                          showCategories ? 'text-yellow-400' : 'text-white hover:text-gray-300'
-                        }`}
-                      >
-                        {item.name}
-                      </button>
+              {navigation.map((item) => {
+                if (item.name === 'Categorías') {
+                  return (
+                    <div 
+                      key={item.name} 
+                      className="relative h-full flex items-center"
+                      onMouseEnter={() => setShowCategories(true)}
+                      onMouseLeave={() => setShowCategories(false)}
+                    >
+                      <button
+                        className={`text-lg font-medium transition-colors ${
+                          showCategories || categories.some(c => isActive(`/${c.toLowerCase()}`)) 
+                          ? 'text-yellow-400' 
+                          : 'text-white hover:text-gray-300'
+                        }`}
+                      >
+                        {item.name}
+                      </button>
 
                       {showCategories && (
-                        <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 min-w-[500px]">
-                          <div className="bg-black/95 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-2xl">
-                            <div className="flex justify-center space-x-6">
-                              {categories.map((cat) => (
-                                <Link
-                                  key={cat}
-                                  to={`/${cat.toLowerCase()}`}
-                                  className="text-gray-400 hover:text-white text-sm font-medium whitespace-nowrap transition-colors"
-                                >
-                                  {cat}
-                                </Link>
+                        <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 min-w-[500px]">
+                          <div className="bg-black/95 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-2xl">
+                            <div className="flex justify-center space-x-6">
+                              {categories.map((cat) => (
+                                <Link
+                                  key={cat}
+                                  to={`/${cat.toLowerCase()}`}
+                                  onClick={() => setShowCategories(false)}
+                                  className={`text-sm font-medium whitespace-nowrap transition-colors ${
+                                    isActive(cat) ? 'text-yellow-400' : 'text-gray-400 hover:text-white'
+                                  }`}
+                                >
+                                  {cat}
+                                </Link>
                               ))}
                             </div>
                           </div>
@@ -70,9 +82,15 @@ const Navbar = () => {
                   );
                 }
                 return (
-                  <Link key={item.name} to={item.href} className="text-white hover:text-gray-300 text-xl font-medium">
-                    {item.name}
-                  </Link>
+                  <Link 
+                    key={item.name} 
+                    to={item.href} 
+                    className={`text-lg font-medium transition-colors ${
+                      isActive(item.href) ? 'text-yellow-400' : 'text-white hover:text-gray-300'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
                 );
               })}
             </div>
