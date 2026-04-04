@@ -13,7 +13,7 @@ const navigation = [
 
 const Navbar = () => {
   const [showCategories, setShowCategories] = useState(false);
-  const categories = ["Populares", "Acción", "Terror", "Comedia", "Animadas"];
+  const categories = ["Populares", "Accion", "Terror", "Comedia", "Animadas"];
 
   return (
     <Disclosure as="nav" className="sticky top-0 z-50 bg-black/70 backdrop-blur-md">
