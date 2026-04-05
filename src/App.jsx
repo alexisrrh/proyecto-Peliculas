@@ -6,10 +6,14 @@ import { AppRoutes } from "./routes/appRoutes";
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
       
-      <AppRoutes />
-      <Footer />
+        <main className="flex-grow">
+          <AppRoutes />
+        </main>
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }
