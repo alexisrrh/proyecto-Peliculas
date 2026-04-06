@@ -7,6 +7,8 @@ export const initialState = {
   Animadas:[], 
 
 
+
+
 };
 
 export const appReducer = (state, action) => {
@@ -59,7 +61,8 @@ export const appReducer = (state, action) => {
           ...state,
           Favoritos: state.Favoritos.filter((item) => item.id !== action.payload.id),
         };
-
+ 
+      
     default:
       return state;
   };
