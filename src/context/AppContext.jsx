@@ -68,6 +68,8 @@ export const AppProvider = ({ children }) => {
       } else {
         console.log(responseA.status);
       }
+    
+
     } catch (error) {
       return console.log("Error:", error);
     }
