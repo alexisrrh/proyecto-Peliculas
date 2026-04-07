@@ -24,7 +24,23 @@ function Modal() {
                 console.log(data);
                 setVideo(data.results[0]);
             }
-        }
+              const trailer =
+        data.results.find(
+          (item) =>
+            item.type === "Trailer" &&
+            item.site === "YouTube" &&
+            item.official === true
+        ) ||
+        data.results.find(
+          (item) =>
+            item.type === "Trailer" &&
+            item.site === "YouTube"
+        ) ||
+        data.results[0];
+
+      setVideo(trailer);
+    }
+ 
         catch (error) {
             console.log("Error:", error);
         }
@@ -71,6 +87,9 @@ function Modal() {
                             )}
 
                         </div>
+                        <div className="text-white">
+
+                        </div >
 
 
                     </div>

@@ -7,7 +7,7 @@ import Accion1 from "../pages/02-Accion";
 import Terror from "../pages/03-Terror";
 import Comedia from "../pages/04-Comedia";
 import Modal from "../componentes/Modal";
-
+import Search from "../pages/Busqueda";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -21,7 +21,7 @@ export const AppRoutes = () => {
       <Route path="/comedia" element={<Comedia />} />
       <Route path="/animadas" element={<Animadas />} />
       <Route path="/modal/:id" element={<Modal/>} />
-
+      <Route path="/search/:texto" element={<Search />} />
    
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

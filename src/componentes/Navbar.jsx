@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import logo from '../assets/logo1.png'
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAppContext } from '../context/AppContext';
 
 const navigation = [
   { name: 'Inicio', href: '/', current: true },
@@ -11,10 +12,24 @@ const navigation = [
   { name: 'Perfil', href: '#', current: false },
 ]
 
-const Navbar = () => {
+const Navbar = () => { 
+  const [buscar, setBusqueda]=useState("")
+ const navigate= useNavigate()
+  
   const [showCategories, setShowCategories] = useState(false);
 const location = useLocation(); // Detecta la ruta actual
   const categories = ["Populares", "Accion", "Terror", "Comedia", "Animadas"];
+
+const busqueda =(e)=>{
+ const texto= e.target.value;
+ setBusqueda(texto)
+ console.log(texto)
+   if (texto.trim() === "")  return;
+     navigate(`/search/${texto}`);
+   
+}
+
+
 
 const isActive = (path) => location.pathname === path;
 
@@ -67,7 +82,7 @@ const isActive = (path) => location.pathname === path;
                                   to={`/${cat.toLowerCase()}`}
                                   onClick={() => setShowCategories(false)}
                                   className={`text-sm font-medium whitespace-nowrap transition-colors ${
-                                    isActive(cat) ? 'text-yellow-400' : 'text-gray-400 hover:text-white'
+                                    isActive(`/${cat.toLowerCase()}`)? 'text-yellow-400' : 'text-gray-400 hover:text-white'
                                   }`}
                                 >
                                   {cat}
@@ -102,12 +117,11 @@ const isActive = (path) => location.pathname === path;
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <MagnifyingGlassIcon className="size-5 text-gray-400" />
               </div>
-              <input
-                type="text"
-                placeholder="Buscar películas..."
-                className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-white md:text-sm"
+              <input onChange={busqueda} value={buscar}
+                type="text" placeholder="Buscar películas..."className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-white md:text-sm"
               />
             </div>
+     
           </div>
         </div> 
       </div> 
