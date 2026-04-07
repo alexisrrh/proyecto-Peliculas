@@ -32,11 +32,11 @@ const PeliculasComedia = () => {
         <i className="fa-solid fa-angles-left"></i>
       </button>
 
-      <div ref={scrollRef} className="listaP">
+      <div ref={scrollRef} className="border-0 flex flex-row justify-start  overflow-hidden gap-20 p-15">
         {state.Comedia.map((item) => (
           <div
             key={item.id}
-            className="min-w-[260px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/80 transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
+            className="max-w-[240px] shrink-0 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg ring-1 ring-white/80 transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
             <Link to={`/modal/${item.id}`} className="block">
               <div className="overflow-hidden">

@@ -20,11 +20,11 @@ const isActive = (path) => location.pathname === path;
 
   return (
     <Disclosure as="nav" className="sticky top-0 z-50 bg-black/70 backdrop-blur-md">
-      <div className="mx-auto px-2 sm:px-6 lg:px-8">
+      <div className="mx-auto px-2 md:px-6 lg:px-8">
         <div className="relative flex h-20 items-center justify-between">
 
           {/* 1. BOTÓN MÓVIL */}
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+          <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white">
               <Bars3Icon className="block size-6 group-data-open:hidden" />
               <XMarkIcon className="hidden size-6 group-data-open:block" />
@@ -32,12 +32,12 @@ const isActive = (path) => location.pathname === path;
           </div>
 
           {/* 2. LADO IZQUIERDO: LOGO Y LINKS */}
-          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+          <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             <div className="flex shrink-0 items-center">
               <img alt="Ipanema Logo" src={logo} className="h-16 w-auto" />
             </div>
 
-            <div className="hidden sm:ml-10 sm:flex items-center space-x-8">
+            <div className="hidden md:ml-10 md:flex items-center space-x-8">
               {navigation.map((item) => {
                 if (item.name === 'Categorías') {
                   return (
@@ -97,7 +97,7 @@ const isActive = (path) => location.pathname === path;
           </div>
 
           {/* 3. LADO DERECHO: BUSCADOR */}
-          <div className="hidden sm:flex items-center ml-4">
+          <div className="hidden md:flex items-center ml-4">
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <MagnifyingGlassIcon className="size-5 text-gray-400" />
@@ -105,7 +105,7 @@ const isActive = (path) => location.pathname === path;
               <input
                 type="text"
                 placeholder="Buscar películas..."
-                className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-white sm:text-sm"
+                className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-white md:text-sm"
               />
             </div>
           </div>
@@ -113,7 +113,7 @@ const isActive = (path) => location.pathname === path;
       </div> 
 
       {/* PANEL MÓVIL */}
-      <DisclosurePanel className="sm:hidden bg-black/90">
+      <DisclosurePanel className="md:hidden bg-black/90">
         <div className="space-y-1 px-2 pt-2 pb-3">
           {navigation.map((item) => (
             <DisclosureButton
