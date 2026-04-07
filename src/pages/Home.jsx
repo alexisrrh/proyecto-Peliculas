@@ -8,25 +8,25 @@ import PeliculasAnimadas from "../componentes/PeliculasAnimadas";
 function Home() {
   return (
     <div>
-      <h1 className="text-3xl text-center text-white mt-10 bg-orange-500/80">
+      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
         Peliculas Populares
-      </h1>
+      </p>
       <PeliculasPopulares />
-      <h1 className="text-3xl text-center text-white mt-4 bg-orange-500/80">
+      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
         Películas de Acción
-      </h1>
+      </p>
       <PeliculasAccion />
-      <h1 className="text-3xl  text-center text-white mt-4 bg-orange-500/80">
+      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
         Películas de Comedia
-      </h1>
+      </p>
       <PeliculasComedia />
-      <h1 className="text-3xl  text-center text-white mt-4 bg-orange-500/80">
+      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
         Películas de Terror
-      </h1>
+      </p>
       <PeliculasTerror />
-      <h1 className="text-3xl  text-center text-white mt-4 bg-orange-500/80">
+      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
         Películas Animadas
-      </h1>
+      </p>
       <PeliculasAnimadas />
     </div>
   );

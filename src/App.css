@@ -1,17 +1,9 @@
 .listaP{
 
-border:none;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  overflow-x:auto;
-  overflow-y: auto;
-   scroll-behavior: smooth;
-  gap: 20px;
-  padding: 35px;
 
  
+   scroll-behavior: smooth;
+
 }
 .listaP::-webkit-scrollbar {
   display: none;
@@ -35,6 +27,7 @@ background-color: rgba(0, 0, 0, 0.863);
 }
 
 body{
+font-family: 'Poppins', sans-serif ; 
 
   background-color: #000000;
 background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
@@ -47,13 +40,6 @@ background-image: url("https://www.transparenttextures.com/patterns/asfalt-light
   justify-content: space-between;
 }
 
-.text-3xl{
-  font-family: 'Poppins', sans-serif ; 
-  font-size: 30px;
-  padding-left: 30px;
-
-  
-}
 
 .textF{
   font-family: 'Poppins', sans-serif ; 

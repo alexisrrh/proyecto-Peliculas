@@ -47,15 +47,23 @@ function Modal() {
 
 
                 <div className="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-                    <div className="w-full max-w-md rounded-lg bg-white/25 p-6 shadow-lg dark:bg-gray-900">
-                        <h2 id="modalTitle" className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white text-center pb-2">
-                            {pelicula.title}
-                        </h2>
-                        <hr className="mb-3 border-gray-300" />
+                    <div className="">
+                        <div className="flex justify-between">
+                            <h2 id="modalTitle" className="text-xl font-bold text-white sm:text-2xl text-center pb-2">
+
+                                {pelicula.title}
+                            </h2>
+                            <Link to="/" >
+                                <button className=" text-white font-bold cursor-pointer hover:scale-120 hover:text-orange-700 hover:bg-white rounded-full p-2 transition-all duration-300">
+                                    X
+                                </button>
+                            </Link>
+                        </div>
+
                         <div>
 
-                            {video?.key ? (<div className="aspect-video w-full overflow-hidden rounded-lg">
-                                <iframe src={`https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1`} className="h-full w-full" frameBorder="0" allowFullScreen title={pelicula.title} ></iframe>
+                            {video?.key ? (<div className="md:h-100 sm:h-75 sm:w-150 md:w-200 overflow-hidden rounded-lg">
+                                <iframe src={`https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1&rel=0`} className="h-full w-full object-cover" frameBorder="0" allowFullScreen title={pelicula.title} ></iframe>
 
                             </div>
                             ) : (
@@ -63,10 +71,8 @@ function Modal() {
                             )}
 
                         </div>
-                        <hr className="mt-3 border-gray-300" />
-                        <Link to="/" ><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex mt-4 mx-80">
-                            Volver
-                        </button>  </Link>
+
+
                     </div>
                 </div>
 

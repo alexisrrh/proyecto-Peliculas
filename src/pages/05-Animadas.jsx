@@ -14,11 +14,9 @@ const Animadas = () => {
             className="group relative flex flex-col overflow-hidden rounded-xl bg-zinc-900 shadow-xl ring-1 ring-white/10 transition-all hover:ring-red-500/50"
           >
             {/* Contenedor de Imagen con ratio de aspecto de póster */}
+            
             <div className="aspect-[2/3] overflow-hidden">
-              <img
-                src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                alt={item.title}
-                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
               {/* Botón de Favorito flotante sobre la imagen */}
               <button 
