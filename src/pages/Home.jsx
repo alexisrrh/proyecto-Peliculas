@@ -8,29 +8,43 @@ import Carrousel from "../componentes/Carrousel";
 
 function Home() {
   return (
-    <div>
-      <Carrousel/>
-      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
+  <div>
+  {/* HERO + LISTA ENCIMA */}
+  <div className="relative w-full h-[130vh]">
+
+    <Carrousel />
+
+    <div className="absolute bottom-6 left-0 z-30 w-full px-6">
+      <p className="text-center text-4xl text-white font-bold drop-shadow-lg mb-0">
         Peliculas Populares
       </p>
+
       <PeliculasPopulares />
-      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
-        Películas de Acción
-      </p>
-      <PeliculasAccion />
-      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
-        Películas de Comedia
-      </p>
-      <PeliculasComedia />
-      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
-        Películas de Terror
-      </p>
-      <PeliculasTerror />
-      <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
-        Películas Animadas
-      </p>
-      <PeliculasAnimadas />
     </div>
+
+  </div>
+
+  {/* RESTO NORMAL (debajo) */}
+  <p className="text-center text-4xl text-white mt-10 font-bold drop-shadow-lg">
+    Películas de Acción
+  </p>
+  <PeliculasAccion />
+
+  <p className="text-center text-4xl text-white mt-10 font-bold drop-shadow-lg">
+    Películas de Comedia
+  </p>
+  <PeliculasComedia />
+
+  <p className="text-center text-4xl text-white mt-10 font-bold drop-shadow-lg">
+    Películas de Terror
+  </p>
+  <PeliculasTerror />
+
+  <p className="text-center text-4xl text-white mt-10 font-bold drop-shadow-lg">
+    Películas Animadas
+  </p>
+  <PeliculasAnimadas />
+</div>
   );
 }
 
