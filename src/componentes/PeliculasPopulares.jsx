@@ -25,7 +25,7 @@ const PeliculasPopulares = () => {
             <i className="fa-solid fa-angles-left"></i>
           </button>
     
-          <div ref={scrollRef} className=" flex flex-row justify-center  overflow-hidden gap-7 p-10 pb-0">
+          <div ref={scrollRef} className=" flex flex-row justify-start  overflow-hidden gap-7 p-10 pb-0">
             {state.Populares.map((item) => (
               <div
                 key={item.id} className="max-w-[300px] group relative shrink-0  shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50">
