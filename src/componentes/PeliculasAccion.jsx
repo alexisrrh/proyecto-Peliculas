@@ -28,11 +28,11 @@ const PeliculasAccion = () => {
     <div className="relative mx-auto ">
       <button
         onClick={() => scroll("left")}
-        className="cursor-pointer botonDerecho absolute left-0 top-1/2 m-5 -translate-y-1/2 z-50 bg-black/60 text-white px-3 py-2 rounded-full outline-none focus:outline-none">
+        className="cursor-pointer  hover:scale-120 transition-all duration-300 absolute left-0 top-3/8 m-5 -translate-y-1/2 z-50 bg-black/70 text-white px-4 py-4 rounded-full outline-none focus:outline-none">
         <i className="fa-solid fa-angles-left"></i>
       </button>
 
-      <div ref={scrollRef} className=" flex flex-row justify-start  overflow-hidden gap-20 p-15">
+      <div ref={scrollRef} className=" flex flex-row justify-start  overflow-hidden gap-7 p-10 pb-0">
         {state.Accion.map((item) => (
           <div
             key={item.id} className="max-w-[300px] group relative shrink-0  shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50">
@@ -63,7 +63,7 @@ const PeliculasAccion = () => {
 
       <button
         onClick={() => scroll("right")}
-        className="cursor-pointer hover:scale-120 transition-all duration-300 absolute right-0 top-1/2 m-5 -translate-y-1/2 z-50 bg-black/60 text-white px-3 py-2 rounded-full"
+        className="cursor-pointer hover:scale-120 transition-all duration-300 absolute right-0 top-3/8 m-5 -translate-y-1/2 z-50 bg-black/70 text-white px-4 py-4 rounded-full"
       >
         <i className="fa-solid fa-angles-right"></i>
       </button>
