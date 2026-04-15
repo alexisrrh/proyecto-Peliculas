@@ -19,7 +19,7 @@ export const AppRoutes = () => {
       <Route path="/comedia" element={<Categorias />} />
       <Route path="/animadas" element={<Categorias />} />
       <Route path="/modal/:id" element={<Modal/>} />
-      <Route path="/search/:texto" element={<Search />} />
+      <Route path="/search/:texto?" element={<Search />} />
    
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

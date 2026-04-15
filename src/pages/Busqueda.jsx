@@ -1,20 +1,28 @@
 
 
-import React from "react";
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 
 const Search = () => {
-  const { state } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const { texto } = useParams();
+  const navigate = useNavigate();
 
-  const buscador = [
-    ...state.Populares,
-    ...state.Accion,
-    ...state.Comedia,
-    ...state.Terror,
-    ...state.Animadas,
+  useEffect(() => {
+    if (texto === undefined || texto.trim() === "") {
+      navigate("/");
+    }
+  }, [texto, navigate]);
+
+  if (!texto || texto.trim() === "") return null;
+
+   const buscador = [
+    ...(state.Populares || []),
+    ...(state.Accion || []),
+    ...(state.Comedia || []),
+    ...(state.Terror || []),
+    ...(state.Animadas || []),
   ];
 
   const buscadorUnico = [
@@ -23,7 +31,7 @@ const Search = () => {
 
   const resultado = buscadorUnico.filter(item => {
     const titulo = item.title || item.name || "";
-    return titulo.toLowerCase().includes(texto.toLowerCase());
+    return titulo.toLowerCase().includes(texto?.toLowerCase() || "");
   });
 
   return (
