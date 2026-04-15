@@ -1,5 +1,7 @@
-import react from react
-
+import React from "react";
+import { useParams } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import { Link } from "react-router-dom";
 
 const Carrousel = ()=> {
   

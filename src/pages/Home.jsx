@@ -4,10 +4,12 @@ import PeliculasAccion from "../componentes/PeliculasAccion";
 import PeliculasComedia from "../componentes/PeliculasComedia";
 import PeliculasTerror from "../componentes/PeliculasTerror";
 import PeliculasAnimadas from "../componentes/PeliculasAnimadas";
+import Carrousel from "../componentes/Carrousel";
 
 function Home() {
   return (
     <div>
+      <Carrousel/>
       <p className="text-center text-4xl text-white mt-10 text-shadow-sm font-bold text-shadow-orange-500">
         Peliculas Populares
       </p>
