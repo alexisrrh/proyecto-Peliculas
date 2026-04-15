@@ -1,43 +1,43 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
+import { Link } from "react-router-dom";
 
 const Comedia = () => {
   const { state, dispatch } = useAppContext();
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      {/* Grid responsivo: 1 columna en móvil, 2 en tablet, 4 en desktop */}
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="justify-content-center max-w-7xl mx-auto px-4 py-4">
+      <div className="grid justify-items-center gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {state.Comedia.map((item) => (
           <div
             key={item.id}
-            className="group relative flex flex-col overflow-hidden rounded-xl bg-zinc-900 shadow-xl ring-1 ring-white/10 transition-all hover:ring-red-500/50"
+            className="max-w-[300px] group relative shrink-0  shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
-            {/* Contenedor de Imagen con ratio de aspecto de póster */}
-            <div className="aspect-[2/3] overflow-hidden">
-              <img
-                src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                alt={item.title}
-                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-              />
-              {/* Botón de Favorito flotante sobre la imagen */}
-              <button 
-                onClick={() => dispatch({ type: "set_Favoritos", payload: item })}
-                className="absolute top-3 right-3 z-10 rounded-full bg-black/60 p-2 backdrop-blur-md transition hover:bg-red-500/20"
-              >
-                <i className={` text-xl ${state.Favoritos.find((fav) => fav.id === item.id) ? "fa-solid fa-heart text-red-500" : "fa-regular fa-heart text-white"}`}></i>
-              </button>
-            </div>
+            <div className="relative h-[400px] rounded-2xl overflow-hidden">
+              <Link to={`/modal/${item.id}`}>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                  alt={item.title}
+                  className="h-full w-full rounded-2xl object-cover transition duration-500 hover:rotate-2 hover:grayscale"
+                />
+              </Link>
 
-            {/* Contenido de Texto */}
-            <div className="flex flex-1 flex-col p-4">
-              <h3 className="line-clamp-1 text-lg font-bold text-white">
-                {item.title}
-              </h3>
-              <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-400">
-                {item.overview}
-              </p>
+              <div className="absolute top-0 left-0 right-0 flex items-start justify-between gap-3 p-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <h3 className="text-lg font-semibold text-white">
+                  {item.title}
+                </h3>
+
+                <i
+                  className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${state.Favoritos.find((fav) => fav.id === item.id) ? "text-red-500 scale-110" : "text-white"}`}
+                  onClick={() =>
+                    dispatch({ type: "set_Favoritos", payload: item })
+                  }
+                ></i>
+              </div>
             </div>
+            <p className="overflow-hidden rounded-2xl  bg-zinc-900 mt-3 text-sm leading-6 text-white font-bold text-justify line-clamp-4 px-4 py-1 group-hover:translate-y-0 md:opacity-0 group-hover:opacity-100  md:-translate-y-100 transition-all duration-300">
+              {item.overview}
+            </p>
           </div>
         ))}
       </div>
