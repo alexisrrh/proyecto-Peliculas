@@ -25,7 +25,7 @@ function Favoritos() {
                   />
                 </Link>
 
-                <div className="absolute top-0 left-0 right-0 flex items-start justify-between gap-3 p-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <div className="absolute top-0 left-0 right-0 flex items-end justify-between gap-3 p-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500">
                   <h3 className="text-lg font-semibold text-white">
                     {item.title}
                   </h3>
@@ -33,13 +33,14 @@ function Favoritos() {
                   <i className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${ state.Favoritos.find((fav) => fav.id === item.id) ? "text-red-500 scale-110": "text-white"}`} onClick={() => dispatch({ type: "set_Favoritos", payload: item }) }
                   ></i>
                 </div>
-
+         
                 <i
-                  className="fa-regular fa-trash-can absolute bottom-2 right-2 text-red-300 p-2 cursor-pointer"
+                  className="fa-regular fa-trash-can absolute bottom-2 right-2 p-4 cursor-pointer transition transform hover:scale-150 hover:rotate-1 text-red-500"
                   onClick={() =>
                     dispatch({ type: "remove_Favoritos", payload: item })
                   }
                 ></i>
+             
               </div>
 
               <p className="overflow-hidden rounded-2xl  bg-zinc-900 mt-3 text-sm leading-6 text-white font-bold text-justify line-clamp-4 px-4 py-1 group-hover:translate-y-0 md:opacity-0 group-hover:opacity-100  md:-translate-y-100 transition-all duration-300">
