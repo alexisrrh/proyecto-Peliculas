@@ -21,13 +21,16 @@ const location = useLocation(); // Detecta la ruta actual
   const categories = ["Populares", "Accion", "Terror", "Comedia", "Animadas"];
 
 const busqueda =(e)=>{
- const texto= e.target.value;
- setBusqueda(texto)
- console.log(texto)
-   if (texto.trim() === "")  return;
-     navigate(`/search/${texto}`);
-   
-}
+ const texto = e.target.value;
+  setBusqueda(texto);
+  
+  if (texto.trim() === "") {
+    navigate("/"); 
+  } else {
+    
+    navigate(`/search/${texto}`);
+  }
+};
 
 
 
