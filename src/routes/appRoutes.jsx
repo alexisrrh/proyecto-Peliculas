@@ -1,10 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import Favoritos from "../pages/Favoritos";
-import Animadas from "../pages/05-Animadas";
-import Accion1 from "../pages/02-Accion";
-import Terror from "../pages/03-Terror";
-import Comedia from "../pages/04-Comedia";
 import Modal from "../componentes/Modal";
 import Search from "../pages/Busqueda";
 import Categorias from "../pages/Categorias";
