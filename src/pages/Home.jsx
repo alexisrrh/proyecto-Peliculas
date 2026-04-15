@@ -4,7 +4,8 @@ import PeliculasAccion from "../componentes/PeliculasAccion";
 import PeliculasComedia from "../componentes/PeliculasComedia";
 import PeliculasTerror from "../componentes/PeliculasTerror";
 import PeliculasAnimadas from "../componentes/PeliculasAnimadas";
-import Carrousel from "../componentes/Carrousel";
+import Portada from "../componentes/Portada";
+
 
 function Home() {
   return (
@@ -12,7 +13,7 @@ function Home() {
   {/* HERO + LISTA ENCIMA */}
   <div className="relative w-full h-[130vh]">
 
-    <Carrousel />
+    <Portada />
 
     <div className="absolute bottom-6 left-0 z-30 w-full px-6">
       <p className="text-center text-4xl text-white font-bold drop-shadow-lg mb-0">

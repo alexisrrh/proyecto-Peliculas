@@ -3,7 +3,7 @@ import { useAppContext } from "../context/AppContext";
 import { Link } from "react-router-dom";
 
 
-const Carrousel = ()=> {
+const Portada = ()=> {
     const {state} = useAppContext();
 
 
@@ -68,4 +68,4 @@ return (
     </div>
 
 )}
-export default Carrousel;
+export default Portada;
