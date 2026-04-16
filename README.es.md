@@ -7,7 +7,7 @@ Este proyecto está enfocado en demostrar habilidades reales en desarrollo front
 
 🎥 Demo
 
-👉 https://youtu.be/6uShkUgO-Bw
+[👉 Watch Demo](https://youtu.be/6uShkUgO-Bw)
 
 
 ## 📸 Vista previa
@@ -28,12 +28,12 @@ Este proyecto está enfocado en demostrar habilidades reales en desarrollo front
 
 
 🛠️ Tecnologías utilizadas
-React + Vite
-JavaScript (ES6+)
-Tailwind CSS
-Context API + useReducer
-React Router
-API REST (TMDB)
+⚛️ React + Vite  
+🟨 JavaScript (ES6+)  
+🎨 Tailwind CSS  
+🧠 Context API + useReducer  
+🔀 React Router  
+🌐 TMDB API  
 ✨ Funcionalidades
 🔍 Búsqueda de películas en tiempo real
 🎭 Navegación por categorías (Acción, Comedia, Terror, Animación…)

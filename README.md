@@ -25,12 +25,12 @@ This project is focused on demonstrating real frontend development skills, API c
 
 
 🛠️ Technologies Used
-React + Vite
-JavaScript (ES6+)
-Tailwind CSS
-Context API + useReducer
-React Router
-REST API (TMDB)
+⚛️ React + Vite  
+🟨 JavaScript (ES6+)  
+🎨 Tailwind CSS  
+🧠 Context API + useReducer  
+🔀 React Router  
+🌐 TMDB API  
 ✨ Features
 🔍 Real-time movie search
 🎭 Category navigation (Action, Comedy, Horror, Animation…)
