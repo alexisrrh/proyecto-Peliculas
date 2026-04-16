@@ -6,7 +6,7 @@ This project is focused on demonstrating real frontend development skills, API c
 
 🎥 Demo
 
-👉 https://youtu.be/6uShkUgO-Bw
+[👉 Watch Demo](https://youtu.be/6uShkUgO-Bw)
 
 ## 📸 Vista previa
 
@@ -58,7 +58,7 @@ src/
 
 Clone the repository:
 
-git clone https://github.com/YOUR-USERNAME/vhsflix.git
+git clone https://github.com/alexisrrh/proyecto-Peliculas.git
 
 Install dependencies:
 
