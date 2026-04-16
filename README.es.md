@@ -60,7 +60,7 @@ src/
 ⚙️ Instalación y uso
 Clonar el repositorio:
 
-git clone https://github.com/TU-USUARIO/vhsflix.git
+git clone https://github.com/alexisrrh/proyecto-Peliculas.git
 
 Instalar dependencias:
 
