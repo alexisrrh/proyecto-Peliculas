@@ -18,44 +18,49 @@ const Footer = () => {
 
         </div>
 
-        
+        <div className="flex flex-row gap-8 sm:gap-12">
           {/* Bloque Persona 1 */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-sm font-medium">
-              Alexis Rafael Rodriguez Haddad
-            </div>
-            <div className="flex items-center gap-4">
-              <a href="https://instagram.com/alexisrrh" className="hover:text-orange-300 transition-transform hover:scale-125">
-                <FaInstagram size={22} />
-              </a>
-              <a href="https://wa.me/34674516605?text=Hola%20quiero%20información" className="hover:text-orange-300 transition-transform hover:scale-125">
-                <FaWhatsapp size={22} />
-              </a>
-              <a href="https://github.com/alexisrrh" className="hover:text-orange-300 transition-transform hover:scale-125">
-                <i className="text-lg fa-brands fa-github"></i>
-              </a>
+          <div className="flex flex-col items-center gap-1 sm:gap-2">
+              <div className="text-xs font-medium sm:text-sm">
+                Alexis Rafael Rodriguez Haddad
+              </div>
+              
+              <div className="flex items-center gap-3 sm:gap-4">
+                <a href="https://instagram.com/alexisrrh" className="hover:text-orange-300 transition-transform hover:scale-125">
+                  {/* Iconos responsivos usando clases de Tailwind */}
+                  <FaInstagram className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]" />
+                </a>
+                <a href="https://wa.me/34674516605?text=Hola%20quiero%20información" className="hover:text-orange-300 transition-transform hover:scale-125">
+                  <FaWhatsapp className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]" />
+                </a>
+                <a href="https://github.com/alexisrrh" className="hover:text-orange-300 transition-transform hover:scale-125">
+                  <i className="text-base sm:text-lg fa-brands fa-github"></i>
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Bloque Persona 2 */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-sm font-medium">
+          {/* Persona 2 */}
+          <div className="flex flex-col items-center gap-1 sm:gap-2">
+            <div className="text-xs font-medium sm:text-sm">
               Daniel David Díaz Flores
             </div>
-            <div className="flex items-center gap-4">
+            
+            <div className="flex items-center gap-3 sm:gap-4">
               <a href="https://instagram.com/danieldaviddf" className="hover:text-orange-300 transition-transform hover:scale-125">
-                <FaInstagram size={22} />
+                {/* Iconos: tamaño 18px en móvil, 22px en pantallas sm+ */}
+                <FaInstagram className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]" />
               </a>
               <a href="https://wa.me/34643804335?text=Hola%20quiero%20información" className="hover:text-orange-300 transition-transform hover:scale-125">
-                <FaWhatsapp size={22} />
+                <FaWhatsapp className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]" />
               </a>
               <a href="https://github.com/Danieldaviddf" className="hover:text-orange-300 transition-transform hover:scale-125">
-                <i class="text-lg fa-brands fa-github"></i>
+                {/* GitHub: text-base en móvil, text-lg en pantallas sm+ */}
+                <i className="text-base sm:text-lg fa-brands fa-github"></i>
               </a>
             </div>
           </div>
         </div>
-
     </footer>
   );
 };
