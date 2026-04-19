@@ -12,7 +12,7 @@ return (
 <div id="carousel" className="relative w-full">
   <div className="relative h-[85vh] overflow-hidden">
 
-    {state.Accion.map((item, index) => (
+    {state.Populares.map((item, index) => (
       <div
         key={item.id}
         className={`absolute inset-0 transition-all duration-700 ease-in-out ${
