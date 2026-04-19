@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 import { appReducer, initialState } from "./appReducer";
+import { TMDB_KEY } from "../tmdbApi";
 
 const AppContext = createContext();
 
@@ -7,9 +8,15 @@ export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   async function peliculas() {
+    if (!TMDB_KEY) {
+      console.error(
+        "Missing VITE_TMDB_API_KEY. Copy .env.example to .env and set your TMDB key.",
+      );
+      return;
+    }
     try {
       let response = await fetch(
-        "https://api.themoviedb.org/3/movie/popular?api_key=1ecf4daf764af90f82ce01b58fd9ecc7",
+        `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}`,
         { method: "GET" },
       );
       if (response.ok) {
@@ -20,7 +27,7 @@ export const AppProvider = ({ children }) => {
         console.log(response.status);
       }
       let responseP = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=28",
+        `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_KEY}&with_genres=28`,
         { method: "GET" },
       );
       if (responseP.ok) {
@@ -31,7 +38,7 @@ export const AppProvider = ({ children }) => {
         console.log(responseP.status);
       }
       let responseC = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=35",
+        `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_KEY}&with_genres=35`,
         { method: "GET" },
       );
       if (responseC.ok) {
@@ -42,7 +49,7 @@ export const AppProvider = ({ children }) => {
         console.log(responseC.status);
       }
       let responseT = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=27",
+        `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_KEY}&with_genres=27`,
         { method: "GET" },
       );
 
@@ -56,7 +63,7 @@ export const AppProvider = ({ children }) => {
       }
 
       let responseA = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=16",
+        `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_KEY}&with_genres=16`,
         { method: "GET" },
       );
 
