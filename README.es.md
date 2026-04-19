@@ -72,9 +72,9 @@ npm run dev
 
 🔑 Configuración
 
-Crear un archivo .env en la raíz del proyecto:
+Copia .env.example to .env y pon la API KEY de TMDB
 
-VITE_API_KEY=tu_api_key_aqui
+VITE_TMDB_API_KEY=tu_api_key_aqui
 
 📈 Mejoras futuras
 🔐 Autenticación de usuarios

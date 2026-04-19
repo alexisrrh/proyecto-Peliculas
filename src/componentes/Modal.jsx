@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { Link } from "react-router-dom";
+import { TMDB_KEY } from "../tmdbApi";
 
 function Modal() {
     const { id } = useParams();
@@ -15,30 +16,38 @@ function Modal() {
         ...state.Animadas || []];
 
     async function fetchVideos() {
+        if (!TMDB_KEY) {
+            console.error(
+                "Missing VITE_TMDB_API_KEY. Copy .env.example to .env and set your TMDB key.",
+            );
+            return;
+        }
         try {
-            let responseV = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=1ecf4daf764af90f82ce01b58fd9ecc7`,
-                { method: "GET" });
+            let responseV = await fetch(
+                `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${TMDB_KEY}`,
+                { method: "GET" },
+            );
 
             let data = await responseV.json();
             if (responseV.ok) {
                 console.log(data);
                 setVideo(data.results[0]);
             }
-              const trailer =
+            const trailer =
         data.results.find(
-          (item) =>
+        (item) =>
             item.type === "Trailer" &&
             item.site === "YouTube" &&
             item.official === true
         ) ||
         data.results.find(
-          (item) =>
+        (item) =>
             item.type === "Trailer" &&
             item.site === "YouTube"
         ) ||
         data.results[0];
 
-      setVideo(trailer);
+    setVideo(trailer);
     }
  
         catch (error) {
