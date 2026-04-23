@@ -4,7 +4,7 @@ import Favoritos from "../pages/Favoritos";
 import Modal from "../componentes/Modal";
 import Search from "../pages/Busqueda";
 import Categorias from "../pages/Categorias";
-
+import { PerfilUsuario } from "../pages/Perfil";
 
 export const AppRoutes = () => {
   return (
@@ -20,7 +20,7 @@ export const AppRoutes = () => {
       <Route path="/animadas" element={<Categorias />} />
       <Route path="/modal/:id" element={<Modal/>} />
       <Route path="/search/:texto?" element={<Search />} />
-   
+      <Route path="/usuario/:id" element={<PerfilUsuario/>} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
