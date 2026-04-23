@@ -9,7 +9,7 @@ const navigation = [
   { name: 'Inicio', href: '/', current: true },
   { name: 'Categorías', href: '#', current: false },
   { name: 'Favoritos', href: '/favoritos', current: false },
-  { name: 'Perfil', href: '#', current: false },
+  { name: 'Perfil', href: '/usuario/:id', current: false },
 ]
 
 const Navbar = () => { 
