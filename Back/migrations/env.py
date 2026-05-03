@@ -11,17 +11,8 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-# Busca estas líneas en migrations/env.py y cámbiarlas por esto:
-if config.config_file_name is not None:
-    import os
-    # Solo intentamos cargar la configuración si el archivo realmente existe
-    if os.path.exists(config.config_file_name):
-        fileConfig(config.config_file_name)
-    else:
-        print(f"Aviso: No se encontró el archivo de logs {config.config_file_name}")
-
+fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
-
 
 
 def get_engine():
