@@ -60,6 +60,26 @@ const Footer = () => {
               </a>
             </div>
           </div>
+          {/* Persona 3 */}
+          <div className="flex flex-col items-center gap-1 sm:gap-2">
+            <div className="text-xs font-medium sm:text-sm">
+              Roberth Andrade
+            </div>
+            
+            <div className="flex items-center gap-3 sm:gap-4">
+              <a href="https://instagram.com/bobel1308" className="hover:text-orange-300 transition-transform hover:scale-125">
+                {/* Iconos: tamaño 18px en móvil, 22px en pantallas sm+ */}
+                <FaInstagram className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]" />
+              </a>
+              <a href="https://wa.me/34675168255?text=Hola%20quiero%20información" className="hover:text-orange-300 transition-transform hover:scale-125">
+                <FaWhatsapp className="w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]" />
+              </a>
+              <a href="https://github.com/RAntonio13" className="hover:text-orange-300 transition-transform hover:scale-125">
+                {/* GitHub: text-base en móvil, text-lg en pantallas sm+ */}
+                <i className="text-base sm:text-lg fa-brands fa-github"></i>
+              </a>
+            </div>
+          </div>
         </div>
     </footer>
   );
