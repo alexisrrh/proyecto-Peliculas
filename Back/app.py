@@ -16,6 +16,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 db.init_app(app)
 MIGRATE = Migrate(app, db)
+CORS(app, resources={r"/*": {"origins": "*"}})
 CORS(app)
 
 #endpoint para pedir informacion de todos los usuarios
@@ -124,6 +125,73 @@ def user_post():
         "msg": "usuario creado",
         "user": usuario_nuevo.serialize()
     }), 201
+
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.json.get("email")
+    password = request.json.get("password")
+
+    if not email or not password:
+        return jsonify({"msg": "se requieren email y contraseña"}), 400
+
+    user = db.session.execute(
+        select(User).where(User.email == email)
+    ).scalar_one_or_none()
+
+    if user is None:
+        return jsonify({"msg": "email o contraseña incorrectos"}), 401
+
+    if not bcrypt.check_password_hash(user.password, password):
+        return jsonify({"msg": "email o contraseña incorrectos"}), 401
+
+    access_token = create_access_token(identity=email)
+
+    return jsonify({
+        "msg": "login exitoso",
+        "access_token": access_token
+    }), 200
+
+@app.route("/private", methods=["GET"])
+@jwt_required()
+def private():
+    current_user = get_jwt_identity()
+    return jsonify(msg="Acceso autorizado", user=current_user), 200
+
+
+@app.route('/signup', methods=['POST'])
+
+def signup():
+    body = request.get_json()
+
+    nombre = body.get("nombre")
+    apellido = body.get("apellido")
+    email = body.get("email")
+    password = body.get("password")
+
+    if not nombre or not apellido or not email or not password:
+        return jsonify({"msg": "se requieren nombre, apellido, email y contraseña"}), 400
+    
+    existing_user = db.session.execute(
+        select(User).where(User.email == email)
+    ).scalar_one_or_none()
+
+    if existing_user:
+        return jsonify({"msg": "Usuario ya existe"}), 400
+
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    new_user = User(
+        nombre=nombre,
+        apellido=apellido,
+        email=email,
+        password=hashed_password
+    )   
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"msg": "usuario creado"}), 201
+
    
 if __name__ == "__main__":
     app.run(debug=True)
