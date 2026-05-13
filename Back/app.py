@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
-from models import db
+from models import db, User, Pelicula, Favorito
 import os
 from dotenv import load_dotenv
 from sqlalchemy import select
-from models import User, Pelicula
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -17,6 +19,11 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 db.init_app(app)
 MIGRATE = Migrate(app, db)
 CORS(app)
+
+admin = Admin(app, name="Peliculas DB", template_mode="bootstrap3")
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Pelicula, db.session))
+admin.add_view(ModelView(Favorito, db.session))
 
 #endpoint para pedir informacion de todos los usuarios
 @app.route('/user', methods=['GET'])
@@ -111,7 +118,7 @@ def user_post():
         return jsonify({"msg": "Usuario ya existe"}), 400
 
     usuario_nuevo = User(
-        nombre=body["nombre"],
+        nombre = body["nombre"],
         apellido=body["apellido"],
         email=body["email"],
         password=body["password"]
@@ -124,6 +131,10 @@ def user_post():
         "msg": "usuario creado",
         "user": usuario_nuevo.serialize()
     }), 201
+
+@app.route('/test')
+def test():
+    return jsonify({"routes": [str(r) for r in app.url_map.iter_rules()]})
    
 if __name__ == "__main__":
     app.run(debug=True)
