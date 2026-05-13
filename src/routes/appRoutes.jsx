@@ -5,14 +5,20 @@ import Modal from "../componentes/Modal";
 import Search from "../pages/Busqueda";
 import Categorias from "../pages/Categorias";
 import { PerfilUsuario } from "../pages/Perfil";
+import LandingPage from "../pages/LandingPage";
+// Importamos la nueva vista Relax
+import Relax from "../pages/Relax"; 
 
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/favoritos" element={<Favoritos />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/inicio" element={<Home />} />
       
-  
+      {/* Agregamos la ruta del juego aquí */}
+      <Route path="/relax" element={<Relax />} />
+      
+      <Route path="/favoritos" element={<Favoritos />} />
       <Route path="/populares" element={<Categorias />} />
       <Route path="/accion" element={<Categorias />} />
       <Route path="/terror" element={<Categorias />} />
@@ -21,6 +27,7 @@ export const AppRoutes = () => {
       <Route path="/modal/:id" element={<Modal/>} />
       <Route path="/search/:texto?" element={<Search />} />
       <Route path="/usuario/:id" element={<PerfilUsuario/>} />
+      
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
