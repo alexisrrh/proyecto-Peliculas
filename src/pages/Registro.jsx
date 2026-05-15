@@ -2,6 +2,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom/dist/umd/react-router-dom.development";
 import { crearUsuario } from "../services/auth.services";
+
 export default function Registro() {
     const { store, dispatch } = useGlobalReducer();
     const [nombre, setNombre] = useState("");
