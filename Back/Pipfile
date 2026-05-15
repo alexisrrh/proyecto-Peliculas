@@ -17,6 +17,8 @@ flask-cors = "==4.0.0"
 gunicorn = "*"
 flask-admin = "==1.6.1"
 wtforms = "==3.0.1"
+flask-bcrypt = "*"
+flask-jwt-extended = "*"
 
 [requires]
 python_version = "3.14"

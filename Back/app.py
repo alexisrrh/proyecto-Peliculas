@@ -1,24 +1,33 @@
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
-from models import db
+from models import db, User, Pelicula
 import os
 from dotenv import load_dotenv
 from sqlalchemy import select
-from models import User, Pelicula
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+
 load_dotenv()
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS")
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["JWT_SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 db.init_app(app)
 MIGRATE = Migrate(app, db)
-CORS(app, resources={r"/*": {"origins": "*"}})
 CORS(app)
 
+bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
+
+@app.route("/")
+def home():
+    return jsonify({
+        "msg": "API funcionando"
+    }), 200
 #endpoint para pedir informacion de todos los usuarios
 @app.route('/user', methods=['GET'])
 def get_user():
