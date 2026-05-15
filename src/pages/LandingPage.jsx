@@ -54,8 +54,9 @@ const LandingPage = () => {
 
         {/* BOTÓN DE ENTRADA Y BOTÓN RELAX */}
         <div className="flex flex-col sm:flex-row gap-6">
+          {/* 👇 AQUÍ ESTÁ EL CAMBIO HACIA /login */}
           <Link 
-            to="/inicio" 
+            to="/login" 
             className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white uppercase tracking-widest transition-all duration-300 transform -skew-x-12 bg-fuchsia-600 border-b-4 border-r-4 border-cyan-400 hover:bg-cyan-400 hover:border-fuchsia-600 hover:scale-110 active:translate-y-1 active:border-b-0 active:border-r-0 shadow-[0_0_20px_rgba(192,38,211,0.6)]"
           >
             <span className="transform skew-x-12 flex items-center gap-3">
