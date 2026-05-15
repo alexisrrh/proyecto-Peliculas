@@ -2,13 +2,20 @@ import os
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from models import db, User, Pelicula, Favorito
 from dotenv import load_dotenv
 from sqlalchemy import select
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity
+)
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+
+from models import db, User, Pelicula, Favorito
+
 
 load_dotenv()
 
@@ -16,9 +23,9 @@ app = Flask(__name__)
 
 # Configuraciones de la App
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["JWT_SECRET_KEY"] = os.getenv("SECRET_KEY") # Clave para JWT
+app.config["JWT_SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 # Inicialización de extensiones
 db.init_app(app)
@@ -34,6 +41,14 @@ admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Pelicula, db.session))
 admin.add_view(ModelView(Favorito, db.session))
 
+
+@app.route("/")
+def home():
+    return jsonify({
+        "msg": "API funcionando"
+    }), 200
+
+
 # Endpoint para pedir informacion de todos los usuarios
 @app.route('/user', methods=['GET'])
 def get_user():
@@ -48,6 +63,7 @@ def get_user():
     }
     return jsonify(response_body), 200
 
+
 # Endpoint para pedir informacion de todas las peliculas
 @app.route('/peliculas', methods=['GET'])
 def get_peliculas():
@@ -61,6 +77,7 @@ def get_peliculas():
         "result": result
     }
     return jsonify(response_body), 200
+
 
 # Endpoint para pedir informacion de los favoritos de un usuario
 @app.route('/user/<int:user_id>/favoritos', methods=['GET'])
@@ -78,6 +95,7 @@ def handle_user_favoritos(user_id):
     }
     return jsonify(response_body), 200
 
+
 # Endpoint para pedir informacion de un usuario por su id
 @app.route('/user/<int:user_id>', methods=['GET'])
 def handle_user(user_id):
@@ -90,6 +108,7 @@ def handle_user(user_id):
         "result": user.serialize()
     }
     return jsonify(response_body), 200
+
 
 # Endpoint para pedir informacion de una pelicula por su id
 @app.route('/peliculas/<int:pelicula_id>', methods=['GET'])
@@ -104,7 +123,8 @@ def handle_pelicula(pelicula_id):
     }
     return jsonify(response_body), 200
 
-# Endpoint para crear un usuario (sin encriptación - alternativo)
+
+# Endpoint para crear un usuario sin encriptación
 @app.route('/user', methods=['POST'])
 def user_post():
     body = request.json
@@ -123,7 +143,7 @@ def user_post():
         return jsonify({"msg": "Usuario ya existe"}), 400
 
     usuario_nuevo = User(
-        nombre = body["nombre"],
+        nombre=body["nombre"],
         apellido=body["apellido"],
         email=body["email"],
         password=body["password"]
@@ -137,11 +157,17 @@ def user_post():
         "user": usuario_nuevo.serialize()
     }), 201
 
+
 # Endpoint de Login con verificación Bcrypt y Token JWT
 @app.route("/login", methods=["POST"])
 def login():
-    email = request.json.get("email")
-    password = request.json.get("password")
+    body = request.get_json()
+
+    if not body:
+        return jsonify({"msg": "Missing body"}), 400
+
+    email = body.get("email")
+    password = body.get("password")
 
     if not email or not password:
         return jsonify({"msg": "se requieren email y contraseña"}), 400
@@ -163,6 +189,7 @@ def login():
         "access_token": access_token
     }), 200
 
+
 # Endpoint Privado protegido por JWT
 @app.route("/private", methods=["GET"])
 @jwt_required()
@@ -170,10 +197,14 @@ def private():
     current_user = get_jwt_identity()
     return jsonify(msg="Acceso autorizado", user=current_user), 200
 
+
 # Endpoint de Registro con encriptación Bcrypt
 @app.route('/signup', methods=['POST'])
 def signup():
     body = request.get_json()
+
+    if not body:
+        return jsonify({"msg": "Missing body"}), 400
 
     nombre = body.get("nombre")
     apellido = body.get("apellido")
@@ -182,7 +213,7 @@ def signup():
 
     if not nombre or not apellido or not email or not password:
         return jsonify({"msg": "se requieren nombre, apellido, email y contraseña"}), 400
-    
+
     existing_user = db.session.execute(
         select(User).where(User.email == email)
     ).scalar_one_or_none()
@@ -197,12 +228,13 @@ def signup():
         apellido=apellido,
         email=email,
         password=hashed_password
-    )   
+    )
 
     db.session.add(new_user)
     db.session.commit()
 
     return jsonify({"msg": "usuario creado"}), 201
+
 
 if __name__ == "__main__":
     app.run(debug=True)
