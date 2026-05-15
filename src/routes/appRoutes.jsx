@@ -6,8 +6,9 @@ import Search from "../pages/Busqueda";
 import Categorias from "../pages/Categorias";
 import { PerfilUsuario } from "../pages/Perfil";
 import LandingPage from "../pages/LandingPage";
-// Importamos la nueva vista Relax
 import Relax from "../pages/Relax"; 
+// 1. Importar el componente
+import LogIn from "../componentes/LogIn"; 
 
 export const AppRoutes = () => {
   return (
@@ -15,9 +16,9 @@ export const AppRoutes = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/inicio" element={<Home />} />
       
-      {/* Agregamos la ruta del juego aquí */}
-      <Route path="/relax" element={<Relax />} />
+      <Route path="/login" element={<LogIn />} />
       
+      <Route path="/relax" element={<Relax />} />
       <Route path="/favoritos" element={<Favoritos />} />
       <Route path="/populares" element={<Categorias />} />
       <Route path="/accion" element={<Categorias />} />
