@@ -9,7 +9,7 @@ export async function login(email, password) {
         headers: { 'Content-Type': 'application/json' },
         body: raw,
     };
-try {    const response = await fetch('https://psychic-space-garbanzo-wrpjgrxr6xvqf94pw-3000.app.github.dev/login', requestOptions);
+try {    const response = await fetch('http://127.0.0.1:5000/login', requestOptions);
     const data = await response.json();
        if (response.ok) {
             return data;
@@ -40,7 +40,7 @@ export async function crearUsuario(nombre, apellido, email, password) {
     };
 
     try {
-        const response = await fetch("https://psychic-space-garbanzo-wrpjgrxr6xvqf94pw-3000.app.github.dev/signup", requestOptions);
+        const response = await fetch("http://127.0.0.1:5000/signup", requestOptions);
         const data = await response.json();
         if (response.ok) {
             return data;

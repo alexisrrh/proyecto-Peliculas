@@ -13,9 +13,10 @@ const navigation = [
 ]
 
 const Navbar = () => { 
+ 
   const [buscar, setBusqueda]=useState("")
  const navigate= useNavigate()
-  
+  const user = localStorage.getItem("user");
   const [showCategories, setShowCategories] = useState(false);
 const location = useLocation(); // Detecta la ruta actual
   const categories = ["Populares", "Accion", "Terror", "Comedia", "Animadas"];
@@ -115,17 +116,48 @@ const isActive = (path) => location.pathname === path;
           </div>
 
           {/* 3. LADO DERECHO: BUSCADOR */}
-          <div className="hidden md:flex items-center ml-4">
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <MagnifyingGlassIcon className="size-5 text-gray-400" />
-              </div>
-              <input onChange={busqueda} value={buscar}
-                type="text" placeholder="Buscar películas..."className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-white md:text-sm"
-              />
-            </div>
-     
-          </div>
+         {/* 3. LADO DERECHO: BUSCADOR */}
+<div className="hidden md:flex items-center ml-4 gap-4">
+
+  <div className="relative">
+    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+      <MagnifyingGlassIcon className="size-5 text-gray-400" />
+    </div>
+
+    <input
+      onChange={busqueda}
+      value={buscar}
+      type="text"
+      placeholder="Buscar películas..."
+      className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-white md:text-sm"
+    />
+  </div>
+
+  {user ? (
+    <div className="flex items-center gap-3">
+
+  
+      <button
+        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+        onClick={() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login");
+        }}
+      >
+        Cerrar sesion
+      </button>
+    </div>
+  ) : (
+    <Link
+      to="/login"
+      className="text-white hover:text-yellow-400"
+    >
+      Iniciar sesión
+    </Link>
+  )}
+
+</div>
         </div> 
       </div> 
 
