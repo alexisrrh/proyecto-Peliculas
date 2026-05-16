@@ -9,6 +9,7 @@ import LandingPage from "../pages/LandingPage";
 import Relax from "../pages/Relax"; 
 // 1. Importar el componente
 import LogIn from "../componentes/LogIn"; 
+import Registro from "../componentes/Registro";
 
 export const AppRoutes = () => {
   return (
@@ -28,7 +29,7 @@ export const AppRoutes = () => {
       <Route path="/modal/:id" element={<Modal/>} />
       <Route path="/search/:texto?" element={<Search />} />
       <Route path="/usuario/:id" element={<PerfilUsuario/>} />
-      
+      <Route path="/registro"  element={<Registro/>}/>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

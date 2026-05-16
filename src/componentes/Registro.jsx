@@ -1,29 +1,34 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import {login  } from "../services/auth.services";
-const LogIn = () => {
 
-  const navigate = useNavigate();
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { crearUsuario } from "../services/auth.services";
 
-  const[ email, setEmail] = useState("");
-  const[password, setPassword]= useState("");
+export default function Registro() {
    
-  
+    const [nombre, setNombre] = useState("");
+    const [apellido, setApellido] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
- 
 
-   const handleSubmit = async (e) => {
+     const handleSubmit = async (e) => {
         e.preventDefault();
-        let usuario = await login(email, password);
-        if (usuario.msg != "login exitoso") {
-           alert("usuario o contraseña incorrectos");
+        let usuario = await crearUsuario(nombre, apellido, email, password);        
+       if (!usuario) {
+           alert("Error al crear el usuario");
+           return;
         } 
         localStorage.setItem("token", usuario.access_token);
-        localStorage.setItem("user", email);
-        navigate("/inicio");
+        navigate("/login");
         }
+      
+      
 
-  return (
+     
+
+
+    return (
     <div className="min-h-screen flex items-center justify-center p-4 font-mono relative overflow-hidden">
       
       {/* CAPA DE EFECTO CRT/VHS */}
@@ -49,25 +54,41 @@ const LogIn = () => {
             VHSFLIX
           </h2>
           <p className="text-cyan-300 text-xs tracking-[0.3em] uppercase mt-2 bg-cyan-900/30 inline-block px-3 py-1 border border-cyan-500/30">
-            Terminal de Acceso
+            Terminal de registro
           </p>
         </div>
 
         {/* FORMULARIO */}
         <form onSubmit={handleSubmit} className="space-y-6">
+
+          <div className="relative">
+            <label className="block text-fuchsia-400 text-xs font-bold mb-2 uppercase tracking-widest flex items-center gap-2">
+              <i className="fa-solid fa-key text-[10px]"></i> Nombre
+            </label>
+            <input
+              type="text" name="nombre" value={nombre} onChange={(e)=> setNombre(e.target.value)} className="w-full bg-white/50 border border-zinc-700 focus:border-fuchsia-500 text-fuchsia-50 font-bold tracking-widest p-3 outline-none transition-all duration-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)] focus:shadow-[0_0_15px_rgba(217,70,239,0.4)] placeholder-zinc-600" placeholder="NOMBRE"
+            />
+          </div>
+
+
           
           <div className="relative">
+            <label className="block text-fuchsia-400 text-xs font-bold mb-2 uppercase tracking-widest flex items-center gap-2">
+              <i className="fa-solid fa-key text-[10px]"></i> APELLIDO
+            </label>
+            <input
+              type="text"
+              name="apellido" value={apellido} onChange={(e)=> setApellido(e.target.value)} required className="w-full bg-white/50 border border-zinc-700 focus:border-fuchsia-500 text-fuchsia-50 font-bold tracking-widest p-3 outline-none transition-all duration-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)] focus:shadow-[0_0_15px_rgba(217,70,239,0.4)] placeholder-zinc-600" placeholder="APELLIDO"
+            />
+          </div>
+          
+          <div className="relative">
+
             <label className="block text-fuchsia-400 text-xs font-bold mb-2 uppercase tracking-widest flex items-center gap-2">
               <i className="fa-solid fa-user text-[10px]"></i> ID de Socio
             </label>
             <div className="relative">
-              <input
-                type="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/50 border border-zinc-700 focus:border-cyan-400 text-cyan-50 font-bold tracking-wider p-3 outline-none transition-all duration-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)] focus:shadow-[0_0_15px_rgba(6,182,212,0.4)] placeholder-zinc-600"
-                placeholder="INGRESA TU CORREO"
+              <input type="email" name="email" value={email} onChange={(e)=>setEmail(e.target.value)} className="w-full bg-white/50 border border-zinc-700 focus:border-cyan-400 text-cyan-50 font-bold tracking-wider p-3 outline-none transition-all duration-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)] focus:shadow-[0_0_15px_rgba(6,182,212,0.4)] placeholder-zinc-600" placeholder="RREGISTRA TU CORREO"
               />
             </div>
           </div>
@@ -77,8 +98,7 @@ const LogIn = () => {
               <i className="fa-solid fa-key text-[10px]"></i> Código de Acceso
             </label>
             <input
-              type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full bg-white/50 border border-zinc-700 focus:border-fuchsia-500 text-fuchsia-50 font-bold tracking-widest p-3 outline-none transition-all duration-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)] focus:shadow-[0_0_15px_rgba(217,70,239,0.4)] placeholder-zinc-600"
-              placeholder="INGRESA TU CLAVE"
+              type="password" name="password"  value={password} onChange={(e)=>setPassword(e.target.value)}required className="w-full bg-white/50 border border-zinc-700 focus:border-fuchsia-500 text-fuchsia-50 font-bold tracking-widest p-3 outline-none transition-all duration-300 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)] focus:shadow-[0_0_15px_rgba(217,70,239,0.4)] placeholder-zinc-600" placeholder="REGISTRA TU CONTRASEÑA"
             />
           </div>
 
@@ -92,9 +112,9 @@ const LogIn = () => {
             </span>
           
           </button>
-          <div className='text-center flex justify-center gap-2'>
-            <span className='text-center'>¿no eres miembro? </span>
-           <span onClick={()=> navigate('/registro')} className='className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2'> Registrate aqui </span>
+           <div className='text-center flex justify-center gap-2'>
+            <span className='text-center'>¿Ya eres miembro? </span>
+           <span onClick={()=> navigate('/login')} className='className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2'> inicia sesion aqui </span>
        </div>
         </form>
 
@@ -108,5 +128,3 @@ const LogIn = () => {
     </div>
   );
 };
-
-export default LogIn;

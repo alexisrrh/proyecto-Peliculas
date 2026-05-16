@@ -36,7 +36,7 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 # Panel de Administración
-admin = Admin(app, name="Peliculas DB", template_mode="bootstrap3")
+admin = Admin(app, name="Peliculas DB")
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Pelicula, db.session))
 admin.add_view(ModelView(Favorito, db.session))
