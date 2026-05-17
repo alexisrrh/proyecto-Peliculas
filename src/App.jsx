@@ -8,7 +8,7 @@ function Layout() {
   const location = useLocation();
   
   // 👇 Se añadió "/login" para no mostrar Navbar/Footer aquí tampoco
-  const isFullScreenPage = location.pathname === "/" || location.pathname === "/relax" || location.pathname === "/login";
+  const isFullScreenPage = location.pathname === "/" || location.pathname === "/relax" || location.pathname === "/login" || location.pathname === "/registro" ;
 
   return (
     <div className="flex flex-col min-h-screen relative text-white">

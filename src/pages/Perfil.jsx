@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 export const PerfilUsuario = () => {
   // Lista fija de las 4 opciones de avatar con temática VHS / Cine Retro
   const opcionesAvatares = [
-    "unsplash.com", // Avatar 1
-    "unsplash.com", // Avatar 2
-    "unsplash.com", // Avatar 3
-    "unsplash.com"  // Avatar 4
+    "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg", // Avatar 1
+    "https://i.pinimg.com/736x/34/0e/1f/340e1f3a71b1b388f6699ebf0328d848.jpg", // Avatar 2
+    "https://i.pinimg.com/736x/dd/02/9d/dd029dca8e5ff2e177ca8459760642fa.jpg", // Avatar 3
+    "https://i.pinimg.com/736x/1e/e8/8a/1ee88a173e942bada798a19fd02f715f.jpg"  // Avatar 4
   ];
 
   // Estado para controlar qué avatar está seleccionado (inicia con el primero)
