@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from '../context/AppContext';
 
 const navigation = [
-  { name: 'Inicio', href: '/', current: true },
+  { name: 'Inicio', href: '/inicio', current: true },
   { name: 'Categorías', href: '#', current: false },
   { name: 'Favoritos', href: '/favoritos', current: false },
   { name: 'Perfil', href: '/usuario/:id', current: false },
