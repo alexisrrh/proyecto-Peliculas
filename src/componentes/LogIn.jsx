@@ -12,16 +12,22 @@ const LogIn = () => {
 
  
 
-   const handleSubmit = async (e) => {
-        e.preventDefault();
-        let usuario = await login(email, password);
-        if (usuario.msg != "login exitoso") {
-           alert("usuario o contraseña incorrectos");
-        } 
-        localStorage.setItem("token", usuario.access_token);
-        localStorage.setItem("user", email);
-        navigate("/inicio");
-        }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const usuario = await login(email, password);
+
+  if (!usuario || usuario.msg !== "login exitoso") {
+    alert("usuario o contraseña incorrectos");
+    return;
+  }
+
+  localStorage.setItem("token", usuario.access_token);
+  localStorage.setItem("user", JSON.stringify(usuario.user));
+  localStorage.setItem("user_id", usuario.user.id);
+
+  navigate("/inicio");
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 font-mono relative overflow-hidden">
