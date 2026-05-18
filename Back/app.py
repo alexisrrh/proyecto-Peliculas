@@ -22,27 +22,28 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configuraciones de la App
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
+db_url = os.getenv("SQLALCHEMY_DATABASE_URI")
+
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["JWT_SECRET_KEY"] = os.getenv("SECRET_KEY")
-
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 # Inicialización de extensiones
 db.init_app(app)
 MIGRATE = Migrate(app, db)
-CORS(app, resources={r"/*": {"origins": [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-]}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 # Panel de Administración
 admin = Admin(app, name="Peliculas DB")
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Pelicula, db.session))
-admin.add_view(ModelView(Favorito, db.session))
+admin.add_view(ModelView(User, db))
+admin.add_view(ModelView(Pelicula, db))
+admin.add_view(ModelView(Favorito, db))
 
 
 @app.route("/")
@@ -82,21 +83,6 @@ def get_peliculas():
     return jsonify(response_body), 200
 
 
-# Endpoint para pedir informacion de los favoritos de un usuario
-@app.route('/user/<int:user_id>/favoritos', methods=['GET'])
-def handle_user_favoritos(user_id):
-    user = db.session.get(User, user_id)
-
-    if user is None:
-        return jsonify({"msg": "No se encontraron usuarios"}), 404
-
-    favoritos = list(map(lambda favorito: favorito.serialize(), user.favoritos))
-
-    response_body = {
-        "msg": "ok",
-        "result": favoritos
-    }
-    return jsonify(response_body), 200
 
 
 # Endpoint para pedir informacion de un usuario por su id
@@ -132,12 +118,12 @@ def create_pelicula():
     body = request.get_json()
 
     tmdb_id = body.get("tmdb_id")
-    title = body.get("title")
+    titulo = body.get("titulo")
     overview = body.get("overview")
     poster_path = body.get("poster_path")
 
-    if not tmdb_id or not title:
-        return jsonify({"msg": "tmdb_id y title son requeridos"}), 400
+    if not tmdb_id or not titulo:
+        return jsonify({"msg": "tmdb_id y titulo son requeridos"}), 400
 
     pelicula_existente = db.session.execute(
         select(Pelicula).where(Pelicula.tmdb_id == tmdb_id)
@@ -150,11 +136,15 @@ def create_pelicula():
         }), 200
 
     nueva_pelicula = Pelicula(
-        tmdb_id=tmdb_id,
-        title=title,
-        overview=overview,
-        poster_path=poster_path
-    )
+    tmdb_id=tmdb_id,
+    titulo=titulo,
+    overview=overview,
+    poster_path=poster_path,
+    backdrop_path=body.get("backdrop_path"),
+    release_date=body.get("release_date"),
+    vote_average=body.get("vote_average"),
+    trailer_key=body.get("trailer_key")
+)
 
     db.session.add(nueva_pelicula)
     db.session.commit()

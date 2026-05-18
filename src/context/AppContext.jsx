@@ -2,14 +2,19 @@ import React, { createContext, useContext, useReducer, useEffect } from "react";
 import { appReducer, initialState } from "./appReducer";
 
 const AppContext = createContext();
-
+const TMDB_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const TMDB_BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
+const TMDB_URL = import.meta.env.VITE_TMDB_DISCOVER_URL;
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   async function peliculas() {
+    console.log("TMDB_BASE_URL:", TMDB_BASE_URL);
+console.log("TMDB_URL:", TMDB_URL);
+console.log("TMDB_KEY:", TMDB_KEY);
     try {
       let response = await fetch(
-        "https://api.themoviedb.org/3/movie/popular?api_key=1ecf4daf764af90f82ce01b58fd9ecc7",
+        `${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_KEY}`,
         { method: "GET" },
       );
       if (response.ok) {
@@ -20,7 +25,7 @@ export const AppProvider = ({ children }) => {
         console.log(response.status);
       }
       let responseP = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=28",
+        `${TMDB_URL}?api_key=${TMDB_KEY}&with_genres=28`,
         { method: "GET" },
       );
       if (responseP.ok) {
@@ -31,7 +36,7 @@ export const AppProvider = ({ children }) => {
         console.log(responseP.status);
       }
       let responseC = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=35",
+        `${TMDB_URL}?api_key=${TMDB_KEY}&with_genres=35`,
         { method: "GET" },
       );
       if (responseC.ok) {
@@ -42,7 +47,7 @@ export const AppProvider = ({ children }) => {
         console.log(responseC.status);
       }
       let responseT = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=27",
+        `${TMDB_URL}?api_key=${TMDB_KEY}&with_genres=27`,
         { method: "GET" },
       );
 
@@ -56,7 +61,7 @@ export const AppProvider = ({ children }) => {
       }
 
       let responseA = await fetch(
-        "https://api.themoviedb.org/3/discover/movie?api_key=1ecf4daf764af90f82ce01b58fd9ecc7&with_genres=16",
+       `${TMDB_URL}?api_key=${TMDB_KEY}&with_genres=16`,
         { method: "GET" },
       );
 
