@@ -8,8 +8,6 @@ verify_ssl = true
 [packages]
 sqlalchemy = "*"
 flask-swagger = "==0.2.14"
-psycopg2-binary = "*"
-gunicorn = "*"
 wtforms = "==3.0.1"
 flask-admin = "*"
 flask = "*"
@@ -19,6 +17,8 @@ flask-cors = "*"
 python-dotenv = "*"
 flask-bcrypt = "*"
 flask-jwt-extended = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.14"
