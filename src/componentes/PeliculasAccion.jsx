@@ -13,6 +13,21 @@ const PeliculasAccion = () => {
 
   const scrollRef = useRef(null);
 
+const userId = localStorage.getItem("user_id");
+
+  async function handleFavorito(item) {
+    if (!userId) {
+      alert("Debes iniciar sesión para agregar favoritos");
+      return;
+    }
+
+    const result = await agregarFavorito(userId, item.id);
+
+    if (result) {
+      dispatch({ type: "set_Favoritos", payload: item });
+    }
+  }
+
   const scroll = (direction) => {
     if (scrollRef.current) {
       const amount = 300;
