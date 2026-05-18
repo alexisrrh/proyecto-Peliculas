@@ -153,26 +153,28 @@ def create_pelicula():
         "msg": "Película creada",
         "pelicula": nueva_pelicula.serialize()
     }), 201
-
 #ENDPOINT PARA CREAR FAVORITOS DEL USUARIO
 @app.route('/users/<int:user_id>/favoritos', methods=['POST'])
 def create_user_favorito(user_id):
+
     body = request.get_json()
 
     if not body:
         return jsonify({"msg": "Missing body"}), 400
 
-    pelicula_id = body.get("pelicula_id")
+    tmdb_id = body.get("tmdb_id")
 
-    if not pelicula_id:
-        return jsonify({"msg": "Se requiere pelicula_id"}), 400
+    if not tmdb_id:
+        return jsonify({"msg": "Se requiere tmdb_id"}), 400
 
     user = db.session.get(User, user_id)
 
     if not user:
         return jsonify({"msg": "Usuario no encontrado"}), 404
 
-    pelicula = db.session.get(Pelicula, pelicula_id)
+    pelicula = db.session.execute(
+        select(Pelicula).where(Pelicula.tmdb_id == tmdb_id)
+    ).scalar_one_or_none()
 
     if not pelicula:
         return jsonify({"msg": "Película no encontrada"}), 404
@@ -180,7 +182,7 @@ def create_user_favorito(user_id):
     favorito_existente = db.session.execute(
         select(Favorito).where(
             Favorito.user_id == user_id,
-            Favorito.pelicula_id == pelicula_id
+            Favorito.pelicula_id == pelicula.id
         )
     ).scalar_one_or_none()
 
@@ -189,7 +191,7 @@ def create_user_favorito(user_id):
 
     nuevo_favorito = Favorito(
         user_id=user_id,
-        pelicula_id=pelicula_id
+        pelicula_id=pelicula.id
     )
 
     db.session.add(nuevo_favorito)
@@ -198,39 +200,6 @@ def create_user_favorito(user_id):
     return jsonify({
         "msg": "Favorito creado",
         "favorito": nuevo_favorito.serialize()
-    }), 201 
-
-# Endpoint para crear un usuario sin encriptación
-@app.route('/user', methods=['POST'])
-def user_post():
-    body = request.json
-
-    if not body:
-        return jsonify({"msg": "Missing body"}), 400
-
-    if "nombre" not in body or "apellido" not in body or "email" not in body or "password" not in body:
-        return jsonify({"msg": "Campos Faltantes"}), 400
-
-    email = db.session.execute(
-        select(User).where(User.email == body["email"])
-    ).scalar_one_or_none()
-
-    if email is not None:
-        return jsonify({"msg": "Usuario ya existe"}), 400
-
-    usuario_nuevo = User(
-        nombre=body["nombre"],
-        apellido=body["apellido"],
-        email=body["email"],
-        password=body["password"]
-    )
-
-    db.session.add(usuario_nuevo)
-    db.session.commit()
-
-    return jsonify({
-        "msg": "usuario creado",
-        "user": usuario_nuevo.serialize()
     }), 201
 
 
