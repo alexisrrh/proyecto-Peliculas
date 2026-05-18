@@ -1,6 +1,6 @@
 
 // FUNCION PARA EL INICIO DE SESION DE UN USUARIO
-
+const API_URL = import.meta.env.VITE_API_URL;
 export async function login(email, password) {
     const raw = JSON.stringify({
         "email": email,
@@ -12,7 +12,7 @@ export async function login(email, password) {
         headers: { 'Content-Type': 'application/json' },
         body: raw,
     };
-try {    const response = await fetch('http://127.0.0.1:5000/login', requestOptions);
+try {    const response = await fetch(`${API_URL}/login`, requestOptions);
     const data = await response.json();
        if (response.ok) {
             return data;
@@ -43,7 +43,7 @@ export async function crearUsuario(nombre, apellido, email, password) {
     };
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/signup", requestOptions);
+        const response = await fetch(`${API_URL}/signup`, requestOptions);
         const data = await response.json();
         if (response.ok) {
             return data;
@@ -65,7 +65,7 @@ export async function Private() {
     };
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/private', requestOptions);
+        const response = await fetch(`${API_URL}/private`, requestOptions);
         const data = await response.json();
         if (response.ok) {
             return data;
@@ -79,9 +79,9 @@ export async function Private() {
     }
 }
 // AGREGAR FAVORITOS
-export async function agregarFavorito(userId, peliculaId) {
+export async function agregarFavorito(userId, tmdbId) {
   const raw = JSON.stringify({
-    pelicula_id: peliculaId,
+    tmdb_id: tmdbId,
   });
 
   const requestOptions = {
@@ -92,7 +92,7 @@ export async function agregarFavorito(userId, peliculaId) {
 
   try {
     const response = await fetch(
-      `http://127.0.0.1:5000/users/${userId}/favoritos`,
+      `${API_URL}/users/${userId}/favoritos`,
       requestOptions
     );
 
