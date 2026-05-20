@@ -69,16 +69,22 @@ const Relax = () => {
       <style>
         *, *:before, *:after { margin: 0; padding: 0; border: 0; box-sizing: border-box; }
         
-        /* BLOQUEAR SELECCIÓN DE TEXTO */
         html, body { 
           display: block; width: 100vw; height: 100vh; cursor: crosshair; 
           user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
         
         body {
-          overflow: hidden; position: relative; background-color: black;
-          background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url('https://raw.githubusercontent.com/rainner/codepen-assets/master/images/pinkish_sunset.jpg');
-          background-position: center top; background-repeat: no-repeat; background-size: cover;
+          overflow: hidden; position: relative; 
+          background-color: #00050a;
+          /* FONTO ESTRELLADO DINÁMICO */
+          background-image: 
+            radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+            radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+            radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+          background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
+          background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
           font-family: 'Courier New', Courier, monospace;
         }
         
@@ -89,13 +95,12 @@ const Relax = () => {
           padding: 0 5%; z-index: 100; pointer-events: none;
         }
         .arcade-text { font-size: clamp(20px, 4vw, 36px); font-weight: bold; color: #0ff; text-shadow: 0 0 10px #0ff, 0 0 20px #d946ef; }
-        #timerBoard { color: #f0f; text-shadow: 0 0 10px #f0f, 0 0 20px #0ff; transition: color 0.3s, text-shadow 0.3s; }
+        #timerBoard { color: #f0f; text-shadow: 0 0 10px #f0f, 0 0 20px #0ff; }
 
-        /* PANTALLA GAME OVER ADAPTATIVA */
         #gameOverScreen {
-          display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000;
+          display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
           flex-direction: column; align-items: center; justify-content: center;
-          backdrop-filter: blur(5px); padding-right: 0;
+          backdrop-filter: blur(10px);
         }
         @media (min-width: 1024px) { #gameOverScreen { padding-right: 400px; } }
 
@@ -114,7 +119,6 @@ const Relax = () => {
         }
         .arcade-btn:hover { background: #0ff; box-shadow: 0 0 20px #0ff; transform: scale(1.05); }
         .restart-btn { background: #0ff; box-shadow: 0 0 15px #0ff; margin-top: 30px; display: none; }
-        .restart-btn:hover { background: #f0f; box-shadow: 0 0 20px #f0f; }
         
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
       </style>
@@ -126,7 +130,7 @@ const Relax = () => {
       </div>
 
       <div id="gameOverScreen">
-        <div class="go-title">TIME OVER</div>
+        <div class="go-title" id="gameOverTitle">TIME OVER</div>
         <div class="go-score">FINAL SCORE: <br><span id="finalScoreVal" style="font-size: 1.5em; color: #ffd700;"></span></div>
         <div class="go-stats">BULLETS FIRED: <span id="finalShotsVal" style="color: #f0f;"></span></div>
         
@@ -151,6 +155,7 @@ const Relax = () => {
         const updateScore = (points) => {
           if(!gameActive) return;
           currentScore += points;
+          if(currentScore < 0) currentScore = 0;
           document.getElementById('scoreBoard').innerText = 'SCORE: ' + currentScore;
         };
 
@@ -158,12 +163,13 @@ const Relax = () => {
           if (!gameActive) return;
           timeLeft--;
           document.getElementById('timerBoard').innerText = 'TIME: ' + timeLeft;
-          if (timeLeft <= 0) endGame();
+          if (timeLeft <= 0) endGame("TIME OVER");
         }, 1000);
 
-        function endGame() {
+        function endGame(reason = "GAME OVER") {
           gameActive = false;
           clearInterval(timerInterval);
+          document.getElementById('gameOverTitle').innerText = reason;
           document.getElementById('gameOverScreen').style.display = 'flex';
           document.getElementById('finalScoreVal').innerText = currentScore;
           document.getElementById('finalShotsVal').innerText = totalShots;
@@ -173,11 +179,10 @@ const Relax = () => {
         window.submitScore = function() {
           let initials = document.getElementById('initials').value;
           if(initials.length !== 3) {
-            alert('¡Ingresa 3 letras exactas!');
+            alert('¡Ingresa 3 letras!');
             return;
           }
           window.parent.postMessage({ type: 'SAVE_SCORE', initials: initials, score: currentScore }, '*');
-          
           document.getElementById('inputSection').style.display = 'none';
           document.getElementById('savedMsg').style.display = 'block';
           document.getElementById('restartBtn').style.display = 'block';
@@ -187,60 +192,43 @@ const Relax = () => {
           window.parent.postMessage({ type: 'RESTART' }, '*');
         };
 
-        let commonHue = 0.038; 
-        let commonColor = new THREE.Color(); commonColor.setHSL( commonHue, .8, .5 );
-
-        const deviceInfo = (function(){
-          const _w = window; const _s = window.screen; const _b = document.body; const _d = document.documentElement;
-          return {
-            screenWidth() { return Math.max( 0, _w.innerWidth || _d.clientWidth || _b.clientWidth || 0 ); },
-            screenHeight() { return Math.max( 0, _w.innerHeight || _d.clientHeight || _b.clientHeight || 0 ); },
-            screenRatio() { return this.screenWidth() / this.screenHeight(); },
-            screenCenterX() { return this.screenWidth() / 2; },
-            screenCenterY() { return this.screenHeight() / 2; },
-            mouseX( e ) { return Math.max( 0, e.pageX || e.clientX || 0 ); },
-            mouseY( e ) { return Math.max( 0, e.pageY || e.clientY || 0 ); },
-            mouseCenterX( e ) { return this.mouseX( e ) - this.screenCenterX(); },
-            mouseCenterY( e ) { return this.mouseY( e ) - this.screenCenterY(); },
-          }; 
-        })();
-
-        const addEase = ( pos, to, ease ) => { pos.x += ( to.x - pos.x ) / ease; pos.y += ( to.y - pos.y ) / ease; pos.z += ( to.z - pos.z ) / ease; };
-
-        // MATERIALES DE ASTEROIDES
-        const mat10 = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true, transparent: true, opacity: 1 }); // Fucsia (Normal)
-        const mat20 = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: 1 }); // Cyan
-        const mat30 = new THREE.MeshBasicMaterial({ color: 0xffaa00, wireframe: true, transparent: true, opacity: 1 }); // Dorado
-        const matTime = new THREE.MeshBasicMaterial({ color: 0x39ff14, wireframe: true, transparent: true, opacity: 1 }); // Verde Neón (Reloj)
+        // MATERIALES
+        const mat10 = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true }); 
+        const mat20 = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true }); 
+        const mat30 = new THREE.MeshBasicMaterial({ color: 0xffaa00, wireframe: true }); 
+        const matTime = new THREE.MeshBasicMaterial({ color: 0x39ff14, wireframe: true }); 
+        const matRed = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }); // PENALIZADOR
+        const matBlack = new THREE.MeshBasicMaterial({ color: 0x444444, wireframe: true }); // MUERTE
 
         const asteroidsManager = {
           scene: null, asteroids: [], 
           baseSpeed: 18, 
-          spawnRate: 0.1, 
+          spawnRate: 0.12, 
           geometry: new THREE.DodecahedronGeometry(25, 0),
           geoTime: new THREE.OctahedronGeometry(22, 0), 
+          geoDanger: new THREE.IcosahedronGeometry(28, 0),
           
           create(scene) { this.scene = scene; },
           spawn() {
             let roll = Math.random();
-            let mat, pts, type, spdMult;
+            let mat, pts, type, spdMult, geo = this.geometry;
 
-            // DISTRIBUCIÓN DE PROBABILIDADES AJUSTADA
-            if (roll < 0.015) { 
-              // 1.5% Reloj de arena (SÚPER RARO)
-              mat = matTime; pts = 0; type = 'time'; spdMult = 1.3; 
-            } else if (roll < 0.365) { 
-              // 35% Normal (Fucsia)
-              mat = mat10; pts = 10; type = 'normal'; spdMult = 1.0; 
-            } else if (roll < 0.765) { 
-              // 40% Cyan (Doble)
-              mat = mat20; pts = 20; type = 'cyan'; spdMult = 1.3; 
+            if (roll < 0.02) { 
+              mat = matTime; pts = 0; type = 'time'; spdMult = 1.3; geo = this.geoTime;
+            } else if (roll < 0.06) { 
+              // NEGRO - MUERTE INSTANTÁNEA (4% prob)
+              mat = matBlack; pts = 0; type = 'death'; spdMult = 0.7; geo = this.geoDanger;
+            } else if (roll < 0.18) { 
+              // ROJO - MENOS 30 PUNTOS (12% prob)
+              mat = matRed; pts = -30; type = 'penalty'; spdMult = 1.0;
+            } else if (roll < 0.45) { 
+              mat = mat10; pts = 10; type = 'normal'; spdMult = 1.0;
+            } else if (roll < 0.75) { 
+              mat = mat20; pts = 20; type = 'cyan'; spdMult = 1.3;
             } else { 
-              // 23.5% Dorado (Triple)
-              mat = mat30; pts = 30; type = 'gold'; spdMult = 1.5; 
+              mat = mat30; pts = 30; type = 'gold'; spdMult = 1.5;
             } 
 
-            let geo = (type === 'time') ? this.geoTime : this.geometry;
             let mesh = new THREE.Mesh(geo, mat);
             mesh.position.set( THREE.Math.randFloat(-2000, 2000), THREE.Math.randFloat(-800, 800), -4000 );
             mesh.rotation.set( Math.random(), Math.random(), Math.random() );
@@ -284,27 +272,17 @@ const Relax = () => {
           }
         };
 
-        // SUELO ASTRAL DINÁMICO
         const groundPlain = {
           group: null, geometry: null, simplex: null, factor: 300, scale: 30, speed: 0.015, cycle: 0, ease: 12, 
           move: { x: 0, y: -300, z: -1000 }, look: { x: 29.8, y: 0, z: 0 }, 
-          targetHue: Math.random(), currentHue: Math.random(), material: null,
+          targetHue: 0.6, currentHue: 0.6, material: null,
           
           create( scene ) {
             this.group = new THREE.Object3D(); this.group.position.set( this.move.x, this.move.y, this.move.z ); this.group.rotation.set( this.look.x, this.look.y, this.look.z );
             this.geometry = new THREE.PlaneGeometry( 4000, 2000, 128, 64 ); 
-            
-            // Material luminoso y brillante
-            this.material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.6 });
-            this.material.color.setHSL(this.currentHue, 1, 0.6);
-            
+            this.material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.4 });
             let plane = new THREE.Mesh( this.geometry, this.material ); this.simplex = new SimplexNoise(); this.moveNoise();
             this.group.add( plane ); scene.add( this.group );
-
-            // CAMBIA EL COLOR OBJETIVO CADA 10 SEGUNDOS
-            setInterval(() => {
-              if(gameActive) this.targetHue = Math.random();
-            }, 10000);
           }, 
           moveNoise() {
             for ( let vertex of this.geometry.vertices ) {
@@ -314,11 +292,10 @@ const Relax = () => {
             this.geometry.verticesNeedUpdate = true; this.cycle += this.speed;
           }, 
           update( mouse ) { 
-            // INTERPOLACIÓN SUAVE DEL COLOR DEL SUELO
             this.currentHue += (this.targetHue - this.currentHue) * 0.02;
-            this.material.color.setHSL(this.currentHue, 1, 0.6);
-            
-            this.moveNoise(); this.move.x = -( mouse.x * 0.04 ); addEase( this.group.position, this.move, this.ease ); 
+            this.material.color.setHSL(this.currentHue, 1, 0.4);
+            this.moveNoise(); this.move.x = -( mouse.x * 0.04 ); 
+            addEase( this.group.position, this.move, this.ease ); 
           }
         };
 
@@ -327,11 +304,11 @@ const Relax = () => {
           move: { x: 0, y: 0, z: -40 }, look: { x: 0, y: 0, z: 0 }, aimDirection: new THREE.Vector3(0, 0, -1),
           create( scene ) {
             this.scene = scene; this.group = new THREE.Object3D(); this.group.position.set( this.move.x, this.move.y, this.move.z );
-            this.setupShip2(); scene.add( this.group ); 
+            this.setupShip(); scene.add( this.group ); 
           },
-          setupShip2() {
-            let material = new THREE.MeshBasicMaterial({ color: 0x0099ff, blending: THREE.AdditiveBlending, transparent: true });
-            let cylinder = new THREE.Mesh( new THREE.CylinderGeometry( 0, .4, 8, 32, 32, true ), material );
+          setupShip() {
+            let material = new THREE.MeshBasicMaterial({ color: 0x0099ff, transparent: true, opacity: 0.8 });
+            let cylinder = new THREE.Mesh( new THREE.CylinderGeometry( 0, .4, 8, 32 ), material );
             cylinder.position.set( 0, .4, 307 ); cylinder.rotation.x = Math.PI / 2; this.group.add( cylinder ); 
           },
           onScroll( e ) {
@@ -341,35 +318,34 @@ const Relax = () => {
           onClick( e ) {
             if(!gameActive) return;
             totalShots++; 
-            
-            let color = new THREE.Color(); color.setHSL( Math.random(), 1, 0.7 ); // Colores más saturados y brillantes
+            let color = new THREE.Color(); 
+            color.setHSL( Math.random(), 1, 0.7 ); 
             this.toggleCannon = !this.toggleCannon; 
             let offsetX = this.toggleCannon ? 3 : -3; 
             
-            // LÁSER SÚPER GRUESO, LARGO Y TOTALMENTE VISIBLE
-            let cylinder = new THREE.Mesh( 
-              new THREE.CylinderGeometry( 3, 3, 100, 8 ), 
-              new THREE.MeshBasicMaterial({ color, opacity: 1, blending: THREE.AdditiveBlending, transparent: true }) 
+            let laser = new THREE.Mesh( 
+              new THREE.CylinderGeometry( 2, 2, 120, 8 ), 
+              new THREE.MeshBasicMaterial({ color, blending: THREE.AdditiveBlending, transparent: true }) 
             );
             
             let spawnPos = new THREE.Vector3(this.group.position.x + offsetX, this.group.position.y, this.group.position.z + 307);
-            cylinder.position.copy(spawnPos);
+            laser.position.copy(spawnPos);
             let dir = this.aimDirection.clone();
-            cylinder.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+            laser.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
             
             let speed = 250; 
-            cylinder.userData = { vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed };
-            this.shots.push( cylinder ); this.scene.add( cylinder ); 
+            laser.userData = { vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed };
+            this.shots.push( laser ); this.scene.add( laser ); 
           }, 
           updateShots() {
             for ( let i = this.shots.length - 1; i >= 0; i-- ) {
-              let cylinder = this.shots[ i ]; 
-              if ( cylinder.position.z < -4000 ) { this.shots.splice( i, 1 ); this.scene.remove( cylinder ); continue; }
-              cylinder.position.x += cylinder.userData.vx; cylinder.position.y += cylinder.userData.vy; cylinder.position.z += cylinder.userData.vz;
+              let s = this.shots[ i ]; 
+              if ( s.position.z < -4000 ) { this.shots.splice( i, 1 ); this.scene.remove( s ); continue; }
+              s.position.x += s.userData.vx; s.position.y += s.userData.vy; s.position.z += s.userData.vz;
             }
           }, 
           update( mouse, camera ) {
-            let ndcX = mouse.x / deviceInfo.screenCenterX(); let ndcY = -(mouse.y / deviceInfo.screenCenterY());
+            let ndcX = mouse.x / (window.innerWidth/2); let ndcY = -(mouse.y / (window.innerHeight/2));
             let vec = new THREE.Vector3(ndcX, ndcY, 0.5); vec.unproject(camera); vec.sub(camera.position).normalize();
             this.aimDirection = vec.clone();
             let distance = ((this.move.z + 307) - camera.position.z) / vec.z;
@@ -381,28 +357,29 @@ const Relax = () => {
           }
         };
 
+        const addEase = ( pos, to, ease ) => { pos.x += ( to.x - pos.x ) / ease; pos.y += ( to.y - pos.y ) / ease; pos.z += ( to.z - pos.z ) / ease; };
+
         const checkCollisions = () => {
           for (let i = gunShip.shots.length - 1; i >= 0; i--) {
             let shot = gunShip.shots[i];
             for (let j = asteroidsManager.asteroids.length - 1; j >= 0; j--) {
               let ast = asteroidsManager.asteroids[j];
               
-              if (shot.position.distanceTo(ast.position) < 70) {
+              if (shot.position.distanceTo(ast.position) < 75) {
                 explosions.spawn(ast.position, ast.userData.color); 
+                
+                const type = ast.userData.type;
+                const points = ast.userData.points;
+
                 asteroidsManager.scene.remove(ast); asteroidsManager.asteroids.splice(j, 1);
                 gunShip.scene.remove(shot); gunShip.shots.splice(i, 1);
                 
-                if(ast.userData.type === 'time') {
-                  timeLeft += 10; 
-                  const tBoard = document.getElementById('timerBoard');
-                  tBoard.style.color = '#39ff14';
-                  tBoard.style.textShadow = '0 0 15px #39ff14, 0 0 30px #fff';
-                  setTimeout(() => {
-                    tBoard.style.color = '#f0f';
-                    tBoard.style.textShadow = '0 0 10px #f0f, 0 0 20px #0ff';
-                  }, 500);
+                if(type === 'death') {
+                  endGame("DESTROYED BY BLACK HOLE");
+                } else if(type === 'time') {
+                  timeLeft += 10;
                 } else {
-                  updateScore(ast.userData.points); 
+                  updateScore(points);
                 }
                 break; 
               }
@@ -412,21 +389,19 @@ const Relax = () => {
 
         const setupScene = () => {
           const scene = new THREE.Scene();
-          let mouse = { x: deviceInfo.screenCenterX(), y: deviceInfo.screenCenterY() };  
-          
-          const renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true, precision: 'mediump' } );
-          renderer.setSize( deviceInfo.screenWidth(), deviceInfo.screenHeight() ); renderer.setPixelRatio( window.devicePixelRatio );
+          let mouse = { x: 0, y: 0 };  
+          const renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+          renderer.setSize( window.innerWidth, window.innerHeight );
           renderer.domElement.setAttribute( 'id', 'stageElement' ); document.body.appendChild( renderer.domElement );
-
-          const camera = new THREE.PerspectiveCamera( 60, deviceInfo.screenRatio(), 0.1, 20000 );
-          camera.position.set( 0, 0, 300 ); camera.lookAt( scene.position );
+          const camera = new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 20000 );
+          camera.position.set( 0, 0, 300 );
           
           groundPlain.create( scene ); gunShip.create( scene ); asteroidsManager.create( scene ); explosions.create( scene );
           
-          window.addEventListener( 'resize', e => { camera.aspect = deviceInfo.screenRatio(); camera.updateProjectionMatrix(); renderer.setSize( deviceInfo.screenWidth(), deviceInfo.screenHeight() ); });
-          window.addEventListener( 'mousemove', e => { if(!gameActive) return; mouse.x = deviceInfo.mouseCenterX( e ); mouse.y = deviceInfo.mouseCenterY( e ); });
-          window.addEventListener( 'wheel', e => { gunShip.onScroll( e ); });
-          window.addEventListener( 'click', e => { gunShip.onClick( e ); });
+          window.addEventListener( 'resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize( window.innerWidth, window.innerHeight ); });
+          window.addEventListener( 'mousemove', e => { if(!gameActive) return; mouse.x = e.clientX - window.innerWidth/2; mouse.y = e.clientY - window.innerHeight/2; });
+          window.addEventListener( 'wheel', e => gunShip.onScroll( e ));
+          window.addEventListener( 'click', e => gunShip.onClick( e ));
           
           const loop = () => {
             requestAnimationFrame( loop ); 
@@ -436,7 +411,6 @@ const Relax = () => {
               asteroidsManager.update(); explosions.update();
               checkCollisions();
             } else {
-              // Si el juego termina, el suelo se sigue moviendo y cambiando de color!
               groundPlain.update( mouse );
               explosions.update(); gunShip.updateShots();
             }
@@ -444,7 +418,6 @@ const Relax = () => {
           };
           loop();
         };
-
         setTimeout(setupScene, 100);
       </script>
     </body>
@@ -454,31 +427,27 @@ const Relax = () => {
   return (
     <div className="relative w-full h-screen bg-black select-none font-mono overflow-hidden">
       
-      {/* BOTÓN VOLVER (ESQUINA INFERIOR IZQUIERDA) */}
+      {/* BOTÓN VOLVER */}
       <button 
         onClick={() => navigate('/')}
         className="absolute bottom-6 left-6 z-50 bg-black/80 border-2 border-fuchsia-500 text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white px-4 py-2 uppercase font-bold transition-all shadow-[0_0_15px_rgba(217,70,239,0.8)] cursor-pointer backdrop-blur-md rounded-md"
       >
-        <i className="fa-solid fa-arrow-left mr-2"></i> VOLVER
+        VOLVER
       </button>
 
-      {/* LEADERBOARD (HALL OF FAME RESPONSIVE) */}
+      {/* LEADERBOARD */}
       {isGameOver && (
         <div className="absolute top-4 right-4 md:top-1/2 md:-translate-y-1/2 md:right-10 z-40 bg-black/85 border-4 border-fuchsia-500 p-6 w-[90%] md:w-80 lg:w-96 max-h-[50vh] md:max-h-[80vh] overflow-y-auto backdrop-blur-md shadow-[0_0_30px_rgba(217,70,239,0.7)] pointer-events-auto rounded-xl custom-scrollbar">
-          <h2 className="text-center text-fuchsia-400 text-2xl md:text-3xl font-black tracking-widest mb-4 md:mb-6 border-b-2 border-fuchsia-500 pb-2 md:pb-4 uppercase animate-pulse">
+          <h2 className="text-center text-fuchsia-400 text-2xl md:text-3xl font-black tracking-widest mb-4 border-b-2 border-fuchsia-500 pb-2 uppercase animate-pulse">
             HALL OF FAME
           </h2>
-          
           {leaderboard.length === 0 ? (
-            <p className="text-zinc-500 text-sm md:text-lg font-bold text-center mt-6">NO RECORDS YET</p>
+            <p className="text-zinc-500 text-sm font-bold text-center mt-6">NO RECORDS YET</p>
           ) : (
-            <ul className="text-white font-bold text-lg md:text-2xl space-y-2 md:space-y-3">
+            <ul className="text-white font-bold text-lg md:text-2xl space-y-2">
               {leaderboard.map((entry, index) => (
-                <li key={index} className="flex justify-between border-b border-fuchsia-900/50 pb-1 items-center">
-                  <span className="text-cyan-400">
-                    <span className="text-fuchsia-500 text-base md:text-lg mr-2">{index + 1}.</span>
-                    {entry.initials}
-                  </span>
+                <li key={index} className="flex justify-between border-b border-fuchsia-900/50 pb-1">
+                  <span className="text-cyan-400">{entry.initials}</span>
                   <span className="text-yellow-400">{entry.score}</span>
                 </li>
               ))}
@@ -487,7 +456,6 @@ const Relax = () => {
         </div>
       )}
 
-      {/* JUEGO (IFRAME) */}
       <iframe 
         key={gameKey}
         title="Relax Mode Game"

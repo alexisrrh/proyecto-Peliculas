@@ -79,31 +79,28 @@ export async function Private() {
     }
 }
 // AGREGAR FAVORITOS
-export async function agregarFavorito(userId, tmdbId) {
-  const raw = JSON.stringify({
-    tmdb_id: tmdbId,
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: raw,
-  };
-
+export async function agregarFavorito(userId, pelicula) {
   try {
-    const response = await fetch(
-      `${API_URL}/users/${userId}/favoritos`,
-      requestOptions
-    );
+    const response = await fetch(`${API_URL}/users/${userId}/favoritos`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tmdb_id: pelicula.id,
+        titulo: pelicula.title,
+        poster: pelicula.poster_path,
+      }),
+    });
 
     const data = await response.json();
 
-    if (response.ok) {
-      return data;
-    } else {
+    if (!response.ok) {
       console.error("fallo:", data);
       return null;
     }
+
+    return data;
   } catch (error) {
     console.error("Error agregando favorito:", error);
     return null;
