@@ -6,6 +6,25 @@ const PeliculasTerror = () => {
   const { state, dispatch } = useAppContext();
   const scrollRef = useRef(null);
 
+
+  async function handleFavorito(item) {
+        if (!userId) {
+          alert("Debes iniciar sesión para agregar favoritos");
+          return;
+        }
+      
+        const result = await agregarFavorito(userId, item);
+      
+        console.log("respuesta favorito:", result);
+      
+        if (result) {
+          dispatch({
+            type: "set_Favoritos",
+            payload: result.favorito,
+          });
+        }
+       }  
+       
   const scroll = (direction) => {
     if (scrollRef.current) {
       const amount = 300;

@@ -28,33 +28,44 @@ try {    const response = await fetch(`${API_URL}/login`, requestOptions);
 }
 // FUNCION PARA REGISTRO DE USUARIO
 export async function crearUsuario(nombre, apellido, email, password) {
-    const raw = JSON.stringify({
-        "nombre": nombre,
-        "apellido": apellido,
-        "email": email,
-        "password": password,
-       
+  const raw = JSON.stringify({
+    nombre,
+    apellido,
+    email,
+    password,
+  });
+
+  try {
+    const response = await fetch(`${API_URL}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: raw,
     });
 
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: raw,
-    };
+    const text = await response.text();
+
+    console.log("STATUS SIGNUP:", response.status);
+    console.log("RESPUESTA SIGNUP:", text);
+
+    let data;
 
     try {
-        const response = await fetch(`${API_URL}/signup`, requestOptions);
-        const data = await response.json();
-        if (response.ok) {
-            return data;
-        } else {
-            console.error("fallo:", data);
-            return null;
-        }
-    } catch (error) {
-        console.error('Error during user creation:', error);
-        return null;
+      data = JSON.parse(text);
+    } catch {
+      console.error("El backend no devolvió JSON");
+      return null;
     }
+
+    if (response.ok) {
+      return data;
+    } else {
+      console.error("fallo:", data);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error during user creation:", error);
+    return null;
+  }
 }
 
 export async function Private() {   
