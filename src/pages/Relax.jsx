@@ -65,7 +65,7 @@ const Relax = () => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Relax Mode Game</title>
+      <title>Relax Mode Game - Combo System</title>
       <style>
         *, *:before, *:after { margin: 0; padding: 0; border: 0; box-sizing: border-box; }
         
@@ -76,37 +76,55 @@ const Relax = () => {
         
         body {
           overflow: hidden; position: relative; 
-          background-color: #00050a;
-          /* FONTO ESTRELLADO DINÁMICO */
-          background-image: 
-            radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
-            radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
-            radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
-            radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
-          background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
-          background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
+          background-color: #000000; /* FONDO NEGRO PLANO */
           font-family: 'Courier New', Courier, monospace;
         }
         
         #stageElement { display: block; position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: -1; }
         
         #uiLayer {
-          position: fixed; top: 20px; left: 0; width: 100%; display: flex; justify-content: space-between;
+          position: fixed; top: 20px; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: flex-start;
           padding: 0 5%; z-index: 100; pointer-events: none;
         }
-        .arcade-text { font-size: clamp(20px, 4vw, 36px); font-weight: bold; color: #0ff; text-shadow: 0 0 10px #0ff, 0 0 20px #d946ef; }
+        
+        .right-ui { display: flex; flex-direction: column; align-items: flex-end; }
+
+        .arcade-text { font-size: clamp(20px, 4vw, 36px); font-weight: bold; color: #0ff; text-shadow: 0 0 10px #0ff, 0 0 20px #d946ef; transition: transform 0.1s; }
         #timerBoard { color: #f0f; text-shadow: 0 0 10px #f0f, 0 0 20px #0ff; }
+        
+        /* SISTEMA DE COMBOS CSS */
+        #comboBoard { margin-top: 10px; transform-origin: right center; font-size: clamp(18px, 3.5vw, 32px); }
+        .combo-tier-1 { color: #39ff14 !important; text-shadow: 0 0 10px #39ff14, 0 0 20px #006400 !important; } /* Verde */
+        .combo-tier-2 { color: #ffaa00 !important; text-shadow: 0 0 10px #ffaa00, 0 0 20px #ff0000 !important; } /* Naranja/Dorado */
+        .combo-tier-3 { color: #f0f !important; text-shadow: 0 0 15px #f0f, 0 0 30px #ff00ff !important; } /* Rosa */
+        
+        .combo-max { animation: rainbowPulse 0.4s infinite alternate; font-weight: 900; }
+        @keyframes rainbowPulse {
+          0% { color: #ff0000; text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; transform: scale(1.2) rotate(-2deg); }
+          25% { color: #ffaa00; text-shadow: 0 0 20px #ffaa00, 0 0 40px #ffaa00; transform: scale(1.3) rotate(0deg); }
+          50% { color: #39ff14; text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14; transform: scale(1.2) rotate(2deg); }
+          75% { color: #0ff; text-shadow: 0 0 20px #0ff, 0 0 40px #0ff; transform: scale(1.3) rotate(0deg); }
+          100% { color: #f0f; text-shadow: 0 0 20px #f0f, 0 0 40px #f0f; transform: scale(1.2) rotate(-2deg); }
+        }
+
+        .combo-break { animation: shakeBreak 0.4s; color: #ff0000 !important; text-shadow: 0 0 15px #ff0000 !important; }
+        @keyframes shakeBreak {
+          0% { transform: translateX(0) scale(1.2); }
+          25% { transform: translateX(-15px) scale(1.2); }
+          50% { transform: translateX(15px) scale(1.2); }
+          75% { transform: translateX(-15px) scale(1.2); }
+          100% { transform: translateX(0) scale(1); }
+        }
 
         #gameOverScreen {
           display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
-          flex-direction: column; align-items: center; justify-content: center;
-          backdrop-filter: blur(10px);
+          flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
         @media (min-width: 1024px) { #gameOverScreen { padding-right: 400px; } }
 
         .go-title { font-size: clamp(40px, 8vw, 70px); color: #f0f; text-shadow: 0 0 20px #f0f; margin-bottom: 20px; animation: blink 1s infinite; font-weight: 900;}
         .go-score { font-size: clamp(25px, 5vw, 40px); color: #0ff; margin-bottom: 10px; font-weight: bold; text-align: center;}
-        .go-stats { font-size: clamp(18px, 3vw, 24px); color: #fff; margin-bottom: 40px; font-weight: bold; text-align: center;}
+        .go-stats { font-size: clamp(18px, 3vw, 24px); color: #fff; margin-bottom: 40px; font-weight: bold; text-align: center; line-height: 1.5;}
         
         .input-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;}
         #initials {
@@ -126,13 +144,19 @@ const Relax = () => {
     <body>
       <div id="uiLayer">
         <div id="timerBoard" class="arcade-text">TIME: 50</div>
-        <div id="scoreBoard" class="arcade-text">SCORE: 0</div>
+        <div class="right-ui">
+          <div id="scoreBoard" class="arcade-text">SCORE: 0</div>
+          <div id="comboBoard" class="arcade-text" style="display: none;">COMBO x2</div>
+        </div>
       </div>
 
       <div id="gameOverScreen">
         <div class="go-title" id="gameOverTitle">TIME OVER</div>
         <div class="go-score">FINAL SCORE: <br><span id="finalScoreVal" style="font-size: 1.5em; color: #ffd700;"></span></div>
-        <div class="go-stats">BULLETS FIRED: <span id="finalShotsVal" style="color: #f0f;"></span></div>
+        <div class="go-stats">
+          BULLETS FIRED: <span id="finalShotsVal" style="color: #f0f;"></span><br>
+          MAX COMBO: <span id="finalComboVal" style="color: #39ff14;"></span>
+        </div>
         
         <div class="input-group" id="inputSection">
           <input type="text" id="initials" maxlength="3" placeholder="AAA" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '')" autocomplete="off" />
@@ -152,11 +176,75 @@ const Relax = () => {
         let currentScore = 0;
         let totalShots = 0; 
         
+        // --- SISTEMA DE COMBOS CORREGIDO ---
+        let consecutiveHits = 0; // Cuenta de aciertos seguidos
+        let comboMultiplier = 1; // Multiplicador real de puntos
+        let maxComboReached = 1;
+        let comboTimeout = null;
+
         const updateScore = (points) => {
           if(!gameActive) return;
           currentScore += points;
           if(currentScore < 0) currentScore = 0;
           document.getElementById('scoreBoard').innerText = 'SCORE: ' + currentScore;
+          
+          // Efecto Pop en el score
+          const scBoard = document.getElementById('scoreBoard');
+          scBoard.style.transform = 'scale(1.2)';
+          setTimeout(() => { if(scBoard) scBoard.style.transform = 'scale(1)'; }, 100);
+        };
+
+        const updateComboUI = () => {
+          const comboEl = document.getElementById('comboBoard');
+          // Solo mostramos UI si el multiplicador es 2 o mayor
+          if (comboMultiplier < 2) {
+            comboEl.style.display = 'none';
+            return;
+          }
+          
+          comboEl.style.display = 'block';
+          comboEl.innerText = 'COMBO x' + comboMultiplier;
+          comboEl.className = 'arcade-text'; // Reset clases
+          
+          // Asignar colores según Tiers
+          if (comboMultiplier >= 15) {
+            comboEl.classList.add('combo-max'); // MÁXIMO (Destellos arcoíris)
+          } else if (comboMultiplier >= 10) {
+            comboEl.classList.add('combo-tier-3'); // Rosa
+          } else if (comboMultiplier >= 5) {
+            comboEl.classList.add('combo-tier-2'); // Naranja
+          } else if (comboMultiplier >= 2) {
+            comboEl.classList.add('combo-tier-1'); // Verde
+          }
+
+          // Pop effect solo si no está en modo max
+          if(comboMultiplier < 15) {
+            comboEl.style.transform = 'scale(1.3)';
+            clearTimeout(comboTimeout);
+            comboTimeout = setTimeout(() => { if(comboEl) comboEl.style.transform = 'scale(1)'; }, 100);
+          }
+        };
+
+        const breakCombo = () => {
+          // Solo castigamos con cartel si realmente había un combo construido (>=2)
+          if (comboMultiplier > 1) {
+            const comboEl = document.getElementById('comboBoard');
+            comboEl.innerText = 'COMBO BROKEN!';
+            comboEl.className = 'arcade-text combo-break';
+            comboEl.style.display = 'block';
+            
+            consecutiveHits = 0;
+            comboMultiplier = 1;
+            
+            // Dejar el cartel rojo roto en pantalla un momento antes de desaparecerlo
+            setTimeout(() => {
+                updateComboUI(); 
+            }, 600);
+          } else {
+            // Si falla en el primer tiro (o no tenía combo), se reinicia silenciosamente
+            consecutiveHits = 0;
+            comboMultiplier = 1;
+          }
         };
 
         const timerInterval = setInterval(() => {
@@ -173,6 +261,7 @@ const Relax = () => {
           document.getElementById('gameOverScreen').style.display = 'flex';
           document.getElementById('finalScoreVal').innerText = currentScore;
           document.getElementById('finalShotsVal').innerText = totalShots;
+          document.getElementById('finalComboVal').innerText = 'x' + maxComboReached;
           window.parent.postMessage({ type: 'GAME_OVER' }, '*');
         }
 
@@ -197,8 +286,8 @@ const Relax = () => {
         const mat20 = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true }); 
         const mat30 = new THREE.MeshBasicMaterial({ color: 0xffaa00, wireframe: true }); 
         const matTime = new THREE.MeshBasicMaterial({ color: 0x39ff14, wireframe: true }); 
-        const matRed = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }); // PENALIZADOR
-        const matBlack = new THREE.MeshBasicMaterial({ color: 0x444444, wireframe: true }); // MUERTE
+        const matRed = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true }); 
+        const matBlack = new THREE.MeshBasicMaterial({ color: 0x444444, wireframe: true }); 
 
         const asteroidsManager = {
           scene: null, asteroids: [], 
@@ -216,10 +305,8 @@ const Relax = () => {
             if (roll < 0.02) { 
               mat = matTime; pts = 0; type = 'time'; spdMult = 1.3; geo = this.geoTime;
             } else if (roll < 0.06) { 
-              // NEGRO - MUERTE INSTANTÁNEA (4% prob)
               mat = matBlack; pts = 0; type = 'death'; spdMult = 0.7; geo = this.geoDanger;
             } else if (roll < 0.18) { 
-              // ROJO - MENOS 30 PUNTOS (12% prob)
               mat = matRed; pts = -30; type = 'penalty'; spdMult = 1.0;
             } else if (roll < 0.45) { 
               mat = mat10; pts = 10; type = 'normal'; spdMult = 1.0;
@@ -261,15 +348,15 @@ const Relax = () => {
               p.userData = { vx: THREE.Math.randFloat(-10, 10), vy: THREE.Math.randFloat(-10, 10), vz: THREE.Math.randFloat(-10, 10), life: 30 };
               this.particles.push(p); this.scene.add(p);
             }
-          },
-          update() {
+          }
+        };
+        explosions.update = function() {
             for (let i = this.particles.length - 1; i >= 0; i--) {
               let p = this.particles[i];
               p.position.x += p.userData.vx; p.position.y += p.userData.vy; p.position.z += p.userData.vz;
               p.userData.life--;
               if (p.userData.life <= 0) { this.scene.remove(p); this.particles.splice(i, 1); }
             }
-          }
         };
 
         const groundPlain = {
@@ -318,8 +405,15 @@ const Relax = () => {
           onClick( e ) {
             if(!gameActive) return;
             totalShots++; 
-            let color = new THREE.Color(); 
-            color.setHSL( Math.random(), 1, 0.7 ); 
+            
+            // EL COLOR DE LA BALA CAMBIA SEGÚN EL COMBO!
+            let colorHex = 0x00ffff; // Base Cyan
+            if (comboMultiplier >= 15) { colorHex = new THREE.Color().setHSL(Math.random(), 1, 0.5); } 
+            else if (comboMultiplier >= 10) { colorHex = 0xff00ff; } 
+            else if (comboMultiplier >= 5) { colorHex = 0xffaa00; } 
+            else if (comboMultiplier >= 2) { colorHex = 0x39ff14; } 
+            
+            let color = new THREE.Color(colorHex); 
             this.toggleCannon = !this.toggleCannon; 
             let offsetX = this.toggleCannon ? 3 : -3; 
             
@@ -340,7 +434,14 @@ const Relax = () => {
           updateShots() {
             for ( let i = this.shots.length - 1; i >= 0; i-- ) {
               let s = this.shots[ i ]; 
-              if ( s.position.z < -4000 ) { this.shots.splice( i, 1 ); this.scene.remove( s ); continue; }
+              
+              if ( s.position.z < -4000 ) { 
+                // === PENALIZACIÓN POR FALLAR DISPARO (BALA PERDIDA) ===
+                breakCombo();
+                
+                this.shots.splice( i, 1 ); this.scene.remove( s ); continue; 
+              }
+              
               s.position.x += s.userData.vx; s.position.y += s.userData.vy; s.position.z += s.userData.vz;
             }
           }, 
@@ -362,6 +463,8 @@ const Relax = () => {
         const checkCollisions = () => {
           for (let i = gunShip.shots.length - 1; i >= 0; i--) {
             let shot = gunShip.shots[i];
+            let hitFound = false;
+
             for (let j = asteroidsManager.asteroids.length - 1; j >= 0; j--) {
               let ast = asteroidsManager.asteroids[j];
               
@@ -372,17 +475,37 @@ const Relax = () => {
                 const points = ast.userData.points;
 
                 asteroidsManager.scene.remove(ast); asteroidsManager.asteroids.splice(j, 1);
-                gunShip.scene.remove(shot); gunShip.shots.splice(i, 1);
                 
+                // === LÓGICA DE IMPACTO ===
                 if(type === 'death') {
-                  endGame("DESTROYED BY BLACK HOLE");
+                  breakCombo();
+                  endGame("GAME OVER");
+                } else if (type === 'penalty') {
+                  breakCombo();
+                  updateScore(points); // -30 (o lo que valga la penalización)
                 } else if(type === 'time') {
-                  timeLeft += 10;
+                  timeLeft += 10; 
                 } else {
-                  updateScore(points);
+                  // ACIERTO EXITOSO
+                  consecutiveHits++;
+                  
+                  // El multiplicador se activa a partir del 2do impacto seguido, con un máximo de 15
+                  comboMultiplier = consecutiveHits >= 2 ? Math.min(consecutiveHits, 15) : 1;
+                  
+                  if (comboMultiplier > maxComboReached) maxComboReached = comboMultiplier;
+                  
+                  // Los puntos se multiplican por el combo
+                  updateScore(points * comboMultiplier);
+                  updateComboUI();
                 }
+                
+                hitFound = true;
                 break; 
               }
+            }
+
+            if (hitFound) {
+                gunShip.scene.remove(shot); gunShip.shots.splice(i, 1);
             }
           }
         };
@@ -398,10 +521,12 @@ const Relax = () => {
           
           groundPlain.create( scene ); gunShip.create( scene ); asteroidsManager.create( scene ); explosions.create( scene );
           
+          setInterval(() => { if (gameActive) groundPlain.targetHue = Math.random(); }, 15000);
+          
           window.addEventListener( 'resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize( window.innerWidth, window.innerHeight ); });
           window.addEventListener( 'mousemove', e => { if(!gameActive) return; mouse.x = e.clientX - window.innerWidth/2; mouse.y = e.clientY - window.innerHeight/2; });
           window.addEventListener( 'wheel', e => gunShip.onScroll( e ));
-          window.addEventListener( 'click', e => gunShip.onClick( e ));
+          window.addEventListener( 'mousedown', e => gunShip.onClick( e )); 
           
           const loop = () => {
             requestAnimationFrame( loop ); 
@@ -429,7 +554,14 @@ const Relax = () => {
       
       {/* BOTÓN VOLVER */}
       <button 
-        onClick={() => navigate('/')}
+        onClick={() => {
+          const user = localStorage.getItem("user");
+          if (user) {
+            navigate('/inicio'); 
+          } else {
+            navigate('/'); 
+          }
+        }}
         className="absolute bottom-6 left-6 z-50 bg-black/80 border-2 border-fuchsia-500 text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white px-4 py-2 uppercase font-bold transition-all shadow-[0_0_15px_rgba(217,70,239,0.8)] cursor-pointer backdrop-blur-md rounded-md"
       >
         VOLVER
