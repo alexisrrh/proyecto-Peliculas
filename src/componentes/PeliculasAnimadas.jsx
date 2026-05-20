@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useAppContext } from "../context/AppContext";
 import { Link } from "react-router-dom";
+import { agregarFavorito } from "../services/auth.services";
 
 const PeliculasAnimadas = () => {
     const { state, dispatch } = useAppContext();
@@ -24,8 +25,14 @@ const PeliculasAnimadas = () => {
                         <Link to={`/modal/${item.id}`}>
                             <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} className="rounded-2xl" alt={item.title} />
                         </Link>
-                        <i className={`absolute top-4 right-4 fa-solid fa-heart cursor-pointer ${state.Favoritos.find(f => f.id === item.id) ? "text-red-500" : "text-white"}`}
-                           onClick={() => dispatch({ type: "set_Favoritos", payload: item })}></i>
+                       <i
+                  className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${
+                    state.Favoritos.find((fav) => fav.id === item.id)
+                      ? "text-red-500 scale-110"
+                      : "text-white"
+                  }`}
+                  onClick={() => handleFavorito(item)}
+                ></i>
                     </div>
                 ))}
             </div>
