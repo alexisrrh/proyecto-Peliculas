@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useAppContext } from "../context/AppContext";
-import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { agregarFavorito } from "../services/auth.services";
 
@@ -14,7 +13,9 @@ const PeliculasAccion = () => {
       alert("Debes iniciar sesión para agregar favoritos");
       return;
     }
-    const result = await agregarFavorito(userId, item.id);
+
+    const result = await agregarFavorito(userId, item);
+
     if (result) {
       dispatch({ type: "set_Favoritos", payload: item });
     }
@@ -31,43 +32,55 @@ const PeliculasAccion = () => {
   };
 
   return (
-    <div className="relative mx-auto ">
-      <style>{`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
+    <div className="relative mx-auto">
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
 
       <button
         onClick={() => scroll("left")}
-        className="cursor-pointer hover:scale-120 transition-all duration-300 absolute left-0 top-3/8 m-5 -translate-y-1/2 z-50 bg-black/70 text-white px-4 py-4 rounded-full outline-none focus:outline-none">
+        className="cursor-pointer hover:scale-120 transition-all duration-300 absolute left-0 top-3/8 m-5 -translate-y-1/2 z-50 bg-black/70 text-white px-4 py-4 rounded-full outline-none focus:outline-none"
+      >
         <i className="fa-solid fa-angles-left"></i>
       </button>
 
-      {/* Solo se cambió overflow-hidden por overflow-x-auto y se agregó no-scrollbar */}
-      <div ref={scrollRef} className="flex flex-row justify-start overflow-x-auto no-scrollbar gap-7 p-10 pb-0">
+      <div
+        ref={scrollRef}
+        className="flex flex-row justify-start overflow-x-auto no-scrollbar gap-7 p-10 pb-0"
+      >
         {state.Accion.map((item) => (
           <div
-            key={item.id} className="max-w-[300px] group relative shrink-0 shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50">
-        
-              <div className=" h-100 rounded-2xl  ">
-                    <Link to={`/modal/${item.id}`} >
-                <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title} className="h-full rounded-2xl w-full hover:rotate-2 object-cover transition duration-500 hover:grayscale-100" />
-             </Link>
-             <div className="flex top-0 items-start justify-between gap-3 p-2 group-hover:opacity-100 md:opacity-0  transition-all duration-500 absolute">
-              <h3 className="text-2xl font-semibold text-white">
-                {item.title}
-              </h3>
+            key={item.id}
+            className="max-w-[300px] group relative shrink-0 shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
+          >
+            <div className="h-100 rounded-2xl">
+              <Link to={`/modal/${item.id}`}>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                  alt={item.title}
+                  className="h-full rounded-2xl w-full hover:rotate-2 object-cover transition duration-500 hover:grayscale-100"
+                />
+              </Link>
 
-      <i
-  className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${
-    state.Favoritos.find((fav) => fav.id === item.id)
-      ? "text-red-500 scale-110"
-      : "text-white"
-  }`}
-  onClick={() => handleFavorito(item)}
-></i>
-                </div>
+              <div className="flex top-0 items-start justify-between gap-3 p-2 group-hover:opacity-100 md:opacity-0 transition-all duration-500 absolute">
+                <h3 className="text-2xl font-semibold text-white">
+                  {item.title}
+                </h3>
+
+                <i
+                  className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${
+                    state.Favoritos.find((fav) => fav.id === item.id)
+                      ? "text-red-500 scale-110"
+                      : "text-white"
+                  }`}
+                  onClick={() => handleFavorito(item)}
+                ></i>
               </div>
-          
+            </div>
+
             <div>
-              <p className="overflow-hidden rounded-2xl  bg-zinc-900 mt-3 text-sm leading-6 text-white font-bold text-justify line-clamp-4 px-4 py-1 group-hover:translate-y-0 md:opacity-0 group-hover:opacity-100  md:-translate-y-100 transition-all duration-300">
+              <p className="overflow-hidden rounded-2xl bg-zinc-900 mt-3 text-sm leading-6 text-white font-bold text-justify line-clamp-4 px-4 py-1 group-hover:translate-y-0 md:opacity-0 group-hover:opacity-100 md:-translate-y-100 transition-all duration-300">
                 {item.overview}
               </p>
             </div>
