@@ -89,11 +89,17 @@ export async function agregarFavorito(userId, pelicula) {
       body: JSON.stringify({
         tmdb_id: pelicula.id,
         titulo: pelicula.title,
-        poster: pelicula.poster_path,
+        overview: pelicula.overview,
+        poster_path: pelicula.poster_path,
+        backdrop_path: pelicula.backdrop_path,
+        release_date: pelicula.release_date,
+        vote_average: pelicula.vote_average,
       }),
     });
 
     const data = await response.json();
+
+    console.log("respuesta agregar favorito:", data);
 
     if (!response.ok) {
       console.error("fallo:", data);
@@ -115,6 +121,8 @@ export async function obtenerFavoritos(userId) {
     });
 
     const data = await response.json();
+
+    console.log("favoritos backend:", data);
 
     if (response.ok) {
       return data.result;
