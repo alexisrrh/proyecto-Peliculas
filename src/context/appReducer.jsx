@@ -1,6 +1,6 @@
 export const initialState = {
   Populares: [],
-  Favoritos: JSON.parse(localStorage.getItem("favoritos")) || [],
+  Favoritos: [],
   Accion: [],
   Comedia:[],
   Terror:[],
@@ -61,7 +61,18 @@ export const appReducer = (state, action) => {
           ...state,
           Favoritos: state.Favoritos.filter((item) => item.id !== action.payload.id),
         };
- 
+
+case "set_Favoritos_DB":
+  return {
+    ...state,
+    Favoritos: action.payload,
+  };
+
+case "clear_Favoritos":
+  return {
+    ...state,
+    Favoritos: [],
+  };
       
     default:
       return state;
