@@ -246,8 +246,22 @@ def login():
 @app.route("/private", methods=["GET"])
 @jwt_required()
 def private():
-    current_user = get_jwt_identity()
-    return jsonify(msg="Acceso autorizado", user=current_user), 200
+    # 1. Obtenemos el email que viene en el token
+    email_usuario = get_jwt_identity()
+    
+    # 2. Buscamos al usuario en la tabla User
+    user = User.query.filter_by(email=email_usuario).first()
+    
+    if not user:
+        return jsonify(msg="Usuario no encontrado"), 404
+
+    # 3. Mandamos todos los datos que quieres ver en el perfil
+    return jsonify(
+        id=user.id,
+        nombre=user.nombre,  # Verifica si en tu tabla se llama 'nombre' o 'username'
+        email=user.email,
+        msg="Acceso autorizado"
+    ), 200
 
 
 # Endpoint de Registro con encriptación Bcrypt
