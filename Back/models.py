@@ -13,13 +13,15 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str]=mapped_column(nullable=False)
     favoritos: Mapped[List["Favorito"]] = relationship("Favorito", back_populates="user")
+    avatar: Mapped[str] = mapped_column(String(500), nullable=True, default="https://pinimg.com")
 
     def serialize(self):
         return {
             "id": self.id,
             "nombre": self.nombre,
             "apellido":self.apellido,
-            "email": self.email
+            "email": self.email,
+            "avatar": self.avatar 
         }
 
 
