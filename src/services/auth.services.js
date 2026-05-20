@@ -106,3 +106,45 @@ export async function agregarFavorito(userId, pelicula) {
     return null;
   }
 }
+
+// OBTENER FAVORITOS DE CADA USUARIO 
+export async function obtenerFavoritos(userId) {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/favoritos`, {
+      method: "GET",
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return data.result;
+    } else {
+      console.error("fallo obteniendo favoritos:", data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error obteniendo favoritos:", error);
+    return [];
+  }
+}
+
+// ELIMINAR FAVORITOS DE UN USUARIO 
+export async function eliminarFavorito(favoritoId) {
+  try {
+    const response = await fetch(`${API_URL}/favorite/${favoritoId}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return data;
+    } else {
+      console.error("fallo eliminando favorito:", data);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error eliminando favorito:", error);
+    return null;
+  }
+}

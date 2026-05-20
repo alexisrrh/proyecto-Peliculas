@@ -70,7 +70,15 @@ class Favorito(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "pelicula": self.pelicula.serialize() if self.pelicula else None
-        }
+        "favorito_id": self.id,
+        "user_id": self.user_id,
+
+        "id": self.pelicula.tmdb_id,
+        "title": self.pelicula.titulo,
+        "overview": self.pelicula.overview,
+        "poster_path": self.pelicula.poster_path,
+        "backdrop_path": self.pelicula.backdrop_path,
+        "release_date": self.pelicula.release_date,
+        "vote_average": self.pelicula.vote_average,
+        "trailer_key": self.pelicula.trailer_key,
+    }
