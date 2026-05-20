@@ -246,24 +246,16 @@ def login():
 @app.route("/private", methods=["GET"])
 @jwt_required()
 def private():
-    # --- INICIO DEL COMANDO MÁGICO ---
+    # EJECUTAR ESTO UNA SOLA VEZ PARA CREAR LA COLUMNA
     try:
-        # Esto le dice a la DB: "Oye, crea la columna avatar si no existe"
         db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS avatar VARCHAR(500)'))
         db.session.commit()
-        print("✅ Columna avatar verificada/creada")
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        print("ℹ️ Nota sobre la columna:", e)
-    # --- FIN DEL COMANDO MÁGICO ---
 
-    # Tu lógica normal de siempre
-    email_usuario = get_jwt_identity()
-    user = User.query.filter_by(email=email_usuario).first()
-    
-    if not user:
-        return jsonify({"msg": "Socio no localizado"}), 404
-
+    # Tu lógica normal...
+    email = get_jwt_identity()
+    user = User.query.filter_by(email=email).first()
     return jsonify(user.serialize()), 200
 
 
