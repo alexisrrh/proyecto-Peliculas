@@ -156,13 +156,14 @@ def create_pelicula():
 #ENDPOINT PARA CREAR FAVORITOS DEL USUARIO
 @app.route('/users/<int:user_id>/favoritos', methods=['POST'])
 def create_user_favorito(user_id):
-
     body = request.get_json()
 
     if not body:
         return jsonify({"msg": "Missing body"}), 400
 
     tmdb_id = body.get("tmdb_id")
+    titulo = body.get("titulo")
+    poster = body.get("poster")
 
     if not tmdb_id:
         return jsonify({"msg": "Se requiere tmdb_id"}), 400
@@ -177,7 +178,13 @@ def create_user_favorito(user_id):
     ).scalar_one_or_none()
 
     if not pelicula:
-        return jsonify({"msg": "Película no encontrada"}), 404
+        pelicula = Pelicula(
+            tmdb_id=tmdb_id,
+            titulo=titulo,
+            poster=poster
+        )
+        db.session.add(pelicula)
+        db.session.commit()
 
     favorito_existente = db.session.execute(
         select(Favorito).where(
@@ -201,7 +208,6 @@ def create_user_favorito(user_id):
         "msg": "Favorito creado",
         "favorito": nuevo_favorito.serialize()
     }), 201
-
 
 # Endpoint de Login con verificación Bcrypt y Token JWT
 @app.route("/login", methods=["POST"])
