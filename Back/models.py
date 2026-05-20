@@ -26,14 +26,33 @@ class User(db.Model):
 # PELICULA
 class Pelicula(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    titulo: Mapped[str] = mapped_column(String(120), nullable=False)
 
-    favoritos: Mapped[List["Favorito"]] = relationship("Favorito", back_populates="pelicula")
+    tmdb_id: Mapped[int] = mapped_column(unique=True, nullable=False)
+    titulo: Mapped[str] = mapped_column(String(120), nullable=False)
+    overview: Mapped[str] = mapped_column(String(1000), nullable=True)
+    poster_path: Mapped[str] = mapped_column(String(255), nullable=True)
+    backdrop_path: Mapped[str] = mapped_column(String(255), nullable=True)
+    release_date: Mapped[str] = mapped_column(String(50), nullable=True)
+    vote_average: Mapped[float] = mapped_column(nullable=True)
+
+    trailer_key: Mapped[str] = mapped_column(String(255), nullable=True)
+
+    favoritos: Mapped[List["Favorito"]] = relationship(
+        "Favorito",
+        back_populates="pelicula"
+    )
 
     def serialize(self):
         return {
             "id": self.id,
-            "titulo": self.titulo
+            "tmdb_id": self.tmdb_id,
+            "titulo": self.titulo,
+            "overview": self.overview,
+            "poster_path": self.poster_path,
+            "backdrop_path": self.backdrop_path,
+            "release_date": self.release_date,
+            "vote_average": self.vote_average,
+            "trailer_key": self.trailer_key,
         }
 
 
@@ -51,7 +70,15 @@ class Favorito(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "pelicula": self.pelicula.serialize() if self.pelicula else None
-        }
+        "favorito_id": self.id,
+        "user_id": self.user_id,
+
+        "id": self.pelicula.tmdb_id,
+        "title": self.pelicula.titulo,
+        "overview": self.pelicula.overview,
+        "poster_path": self.pelicula.poster_path,
+        "backdrop_path": self.pelicula.backdrop_path,
+        "release_date": self.pelicula.release_date,
+        "vote_average": self.pelicula.vote_average,
+        "trailer_key": self.pelicula.trailer_key,
+    }

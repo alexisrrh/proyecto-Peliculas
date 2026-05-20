@@ -22,7 +22,7 @@ const Footer = () => {
           {/* Bloque Persona 1 */}
           <div className="flex flex-col items-center gap-1 sm:gap-2">
               <div className="text-xs font-medium sm:text-sm">
-                Alexis Rafael Rodriguez Haddad
+                Alexis Rodriguez
               </div>
               
               <div className="flex items-center gap-3 sm:gap-4">
@@ -43,7 +43,7 @@ const Footer = () => {
           {/* Persona 2 */}
           <div className="flex flex-col items-center gap-1 sm:gap-2">
             <div className="text-xs font-medium sm:text-sm">
-              Daniel David Díaz Flores
+              Daniel Díaz
             </div>
             
             <div className="flex items-center gap-3 sm:gap-4">

@@ -1,9 +1,7 @@
-
-
 import React, { useRef } from "react";
 import { useAppContext } from "../context/AppContext";
 import { Link } from "react-router-dom";
-
+import { agregarFavorito } from "../services/auth.services";
 
 
 const PeliculasComedia = () => {
@@ -26,13 +24,17 @@ const PeliculasComedia = () => {
 
   return (
   <div className="relative mx-auto ">
+        {/* Estilo para ocultar la barra de scroll visualmente */}
+        <style>{`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
+
         <button
           onClick={() => scroll("left")}
           className="cursor-pointer  hover:scale-120 transition-all duration-300 absolute left-0 top-3/8 m-5 -translate-y-1/2 z-50 bg-black/70 text-white px-4 py-4 rounded-full outline-none focus:outline-none">
           <i className="fa-solid fa-angles-left"></i>
         </button>
   
-        <div ref={scrollRef} className=" flex flex-row justify-start  overflow-hidden gap-7 p-10 pb-0">
+        {/* Se cambió overflow-hidden por overflow-x-auto y se agregó no-scrollbar */}
+        <div ref={scrollRef} className=" flex flex-row justify-start  overflow-x-auto no-scrollbar gap-7 p-10 pb-0">
           {state.Comedia.map((item) => (
             <div
               key={item.id} className="max-w-[300px] group relative shrink-0  shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50">
@@ -46,8 +48,14 @@ const PeliculasComedia = () => {
                   {item.title}
                 </h3>
   
-                <i className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${state.Favoritos.find((fav) => fav.id === item.id) ? "text-red-500 scale-110" : "text-white"}`}
-                  onClick={() => { dispatch({ type: "set_Favoritos", payload: item }); }}></i>
+               <i
+                  className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${
+                    state.Favoritos.find((fav) => fav.id === item.id)
+                      ? "text-red-500 scale-110"
+                      : "text-white"
+                  }`}
+                  onClick={() => handleFavorito(item)}
+                ></i>
                   </div>
                 </div>
             
