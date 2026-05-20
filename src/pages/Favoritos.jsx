@@ -22,7 +22,6 @@ function Favoritos() {
       ) : (
         <div className="flex flex-wrap justify-center gap-8 pb-20">
           {state.Favoritos.map((item) => (
-            // Pasamos isFavoritosPage=true para que renderice el botón de eliminar
             <MovieCard key={item.id} item={item} isFavoritosPage={true} />
           ))}
         </div>
