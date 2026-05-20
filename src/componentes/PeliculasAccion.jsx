@@ -8,11 +8,23 @@ const PeliculasAccion = () => {
   const scrollRef = useRef(null);
   const userId = localStorage.getItem("user_id");
 
-  async function handleFavorito(item) {
-    if (!userId) {
-      alert("Debes iniciar sesión para agregar favoritos");
-      return;
-    }
+async function handleFavorito(item) {
+  if (!userId) {
+    alert("Debes iniciar sesión para agregar favoritos");
+    return;
+  }
+
+  const result = await agregarFavorito(userId, item);
+
+  console.log("respuesta favorito:", result);
+
+  if (result) {
+    dispatch({
+      type: "set_Favoritos",
+      payload: result.favorito,
+    });
+  }
+
 
     const result = await agregarFavorito(userId, item);
 

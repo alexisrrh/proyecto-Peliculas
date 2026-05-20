@@ -6,6 +6,24 @@ const Categorias = () => {
   const { state, dispatch } = useAppContext();
   const location = useLocation();
 
+  async function handleFavorito(item) {
+        if (!userId) {
+          alert("Debes iniciar sesión para agregar favoritos");
+          return;
+        }
+      
+        const result = await agregarFavorito(userId, item);
+      
+        console.log("respuesta favorito:", result);
+      
+        if (result) {
+          dispatch({
+            type: "set_Favoritos",
+            payload: result.favorito,
+          });
+        }
+       }  
+
   const getPeliculasPorRuta = () => {
     switch (location.pathname) {
       case '/accion': return { data: state.Accion, titulo: "Acción" };
