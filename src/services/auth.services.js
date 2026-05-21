@@ -70,6 +70,8 @@ export async function crearUsuario(nombre, apellido, email, password) {
 
 export async function Private() {   
     const token = localStorage.getItem("token");
+    if (!token) return null;
+
     const requestOptions = {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` },
@@ -77,18 +79,23 @@ export async function Private() {
 
     try {
         const response = await fetch(`${API_URL}/private`, requestOptions);
-        const data = await response.json();
-        if (response.ok) {
-            return data;
-        } else {
-            console.error("fallo:", data);
+        
+        // 1. Verificamos si la respuesta es exitosa ANTES de hacer .json()
+        if (!response.ok) {
+            const errorText = await response.text(); // Leemos el error como texto
+            console.error("Error del servidor (HTML):", errorText);
             return null;
         }
+
+        const data = await response.json();
+        return data;
+
     } catch (error) {
-        console.error('Error during private endpoint access:', error);
+        console.error('Error de conexión o parseo:', error);
         return null;
     }
 }
+
 // AGREGAR FAVORITOS
 export async function agregarFavorito(userId, pelicula) {
   try {
