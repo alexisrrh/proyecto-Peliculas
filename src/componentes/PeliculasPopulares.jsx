@@ -5,6 +5,8 @@ import { agregarFavorito } from "../services/auth.services";
 const PeliculasPopulares = () => {
   const { state, dispatch } = useAppContext();
   const scrollRef = useRef(null);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
 
   async function handleFavorito(item) {

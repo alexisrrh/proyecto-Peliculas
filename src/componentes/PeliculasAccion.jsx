@@ -26,7 +26,6 @@ async function handleFavorito(item) {
   }
 
 
-    const result = await agregarFavorito(userId, item);
 
     if (result) {
       dispatch({ type: "set_Favoritos", payload: item });

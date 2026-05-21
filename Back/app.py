@@ -153,8 +153,7 @@ def create_pelicula():
         "msg": "Película creada",
         "pelicula": nueva_pelicula.serialize()
     }), 201
-#ENDPOINT PARA CREAR FAVORITOS DEL USUARIO
-@app.route('/users/<int:user_id>/favoritos', methods=['POST'])
+#ENDPOINT PARA CREAR FAVORITOS DEL USUARIO@app.route('/users/<int:user_id>/favoritos', methods=['POST'])
 def create_user_favorito(user_id):
     body = request.get_json()
 
@@ -163,10 +162,12 @@ def create_user_favorito(user_id):
 
     tmdb_id = body.get("tmdb_id")
     titulo = body.get("titulo")
-    poster = body.get("poster")
 
     if not tmdb_id:
         return jsonify({"msg": "Se requiere tmdb_id"}), 400
+
+    if not titulo:
+        return jsonify({"msg": "Se requiere titulo"}), 400
 
     user = db.session.get(User, user_id)
 
@@ -181,8 +182,14 @@ def create_user_favorito(user_id):
         pelicula = Pelicula(
             tmdb_id=tmdb_id,
             titulo=titulo,
-            poster=poster
+            overview=body.get("overview"),
+            poster_path=body.get("poster_path"),
+            backdrop_path=body.get("backdrop_path"),
+            release_date=body.get("release_date"),
+            vote_average=body.get("vote_average"),
+            trailer_key=body.get("trailer_key")
         )
+
         db.session.add(pelicula)
         db.session.commit()
 
