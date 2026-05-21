@@ -1,40 +1,50 @@
-import React, {useState} from 'react';
-import { useAppContext } from '../context/AppContext';
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React from "react";
+import { useAppContext } from "../context/AppContext";
+import { Link, useLocation } from "react-router-dom";
 import { agregarFavorito } from "../services/auth.services";
+
 const Categorias = () => {
   const { state, dispatch } = useAppContext();
   const location = useLocation();
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
+
   async function handleFavorito(item) {
-        if (!userId) {
-          alert("Debes iniciar sesión para agregar favoritos");
-          return;
-        }
-      
-        const result = await agregarFavorito(userId, item);
-      
-        console.log("respuesta favorito:", result);
-      
-        if (result) {
-          dispatch({
-            type: "set_Favoritos",
-            payload: result.favorito,
-          });
-        }
-       }  
+    if (!userId) {
+      alert("Debes iniciar sesión para agregar favoritos");
+      return;
+    }
+
+    const result = await agregarFavorito(userId, item);
+
+    console.log("respuesta favorito:", result);
+
+    if (result) {
+      dispatch({
+        type: "set_Favoritos",
+        payload: result.favorito,
+      });
+    }
+  }
 
   const getPeliculasPorRuta = () => {
     switch (location.pathname) {
-      case '/accion': return { data: state.Accion, titulo: "Acción" };
-      case '/comedia': return { data: state.Comedia, titulo: "Comedia" };
-      case '/terror': return { data: state.Terror, titulo: "Terror" };
-      case '/animadas': return { data: state.Animadas, titulo: "Animadas" };
-      case '/populares': return { data: state.Populares, titulo: "Populares" };
-      default: return { data: state.Pop, titulo: "Destacadas" };
+      case "/accion":
+        return { data: state.Accion, titulo: "Acción" };
+      case "/comedia":
+        return { data: state.Comedia, titulo: "Comedia" };
+      case "/terror":
+        return { data: state.Terror, titulo: "Terror" };
+      case "/animadas":
+        return { data: state.Animadas, titulo: "Animadas" };
+      case "/populares":
+        return { data: state.Populares, titulo: "Populares" };
+      default:
+        return { data: state.Populares, titulo: "Destacadas" };
     }
   };
-      
+
   const { data: peliculas, titulo } = getPeliculasPorRuta();
 
   return (
@@ -43,23 +53,23 @@ const Categorias = () => {
         {peliculas?.map((item) => (
           <div
             key={item.id}
-            className="max-w-[300px] group relative shrink-0  shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
+            className="max-w-[300px] group relative shrink-0 shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
             <div className="relative h-[400px] rounded-2xl overflow-hidden">
               <Link to={`/modal/${item.id}`}>
                 <img
                   src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                  alt={titulo}
+                  alt={item.title}
                   className="h-full w-full rounded-2xl object-cover transition duration-500 hover:rotate-2 hover:grayscale"
                 />
               </Link>
 
               <div className="absolute top-0 left-0 right-0 flex items-start justify-between gap-3 p-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500">
                 <h3 className="text-lg font-semibold text-white">
-                  {titulo}
+                  {item.title}
                 </h3>
 
-              <i
+                <i
                   className={`fa-solid fa-heart cursor-pointer transition transform pt-2 hover:scale-150 ${
                     state.Favoritos.find((fav) => fav.id === item.id)
                       ? "text-red-500 scale-110"
@@ -69,7 +79,8 @@ const Categorias = () => {
                 ></i>
               </div>
             </div>
-            <p className="overflow-hidden rounded-2xl  bg-zinc-900 mt-3 text-sm leading-6 text-white font-bold text-justify line-clamp-4 px-4 py-1 group-hover:translate-y-0 md:opacity-0 group-hover:opacity-100  md:-translate-y-100 transition-all duration-300">
+
+            <p className="overflow-hidden rounded-2xl bg-zinc-900 mt-3 text-sm leading-6 text-white font-bold text-justify line-clamp-4 px-4 py-1 group-hover:translate-y-0 md:opacity-0 group-hover:opacity-100 md:-translate-y-100 transition-all duration-300">
               {item.overview}
             </p>
           </div>

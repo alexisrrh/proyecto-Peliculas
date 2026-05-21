@@ -26,6 +26,8 @@ const handleSubmit = async (e) => {
   localStorage.setItem("user", JSON.stringify(usuario.user));
 
   navigate("/inicio");
+  window.location.reload();
+
 };
 
   return (

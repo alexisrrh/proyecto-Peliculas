@@ -6,32 +6,25 @@ import { agregarFavorito } from "../services/auth.services";
 const PeliculasAccion = () => {
   const { state, dispatch } = useAppContext();
   const scrollRef = useRef(null);
-  const userId = localStorage.getItem("user_id");
 
-async function handleFavorito(item) {
-  if (!userId) {
-    alert("Debes iniciar sesión para agregar favoritos");
-    return;
-  }
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
-  const result = await agregarFavorito(userId, item);
+  async function handleFavorito(item) {
+    if (!userId) {
+      alert("Debes iniciar sesión para agregar favoritos");
+      return;
+    }
 
-  console.log("respuesta favorito:", result);
-
-  if (result) {
-    dispatch({
-      type: "set_Favoritos",
-      payload: result.favorito,
-    });
-  }
-
-
+    const result = await agregarFavorito(userId, item);
 
     if (result) {
-      dispatch({ type: "set_Favoritos", payload: item });
+      dispatch({
+        type: "set_Favoritos",
+        payload: result.favorito,
+      });
     }
   }
-
   const scroll = (direction) => {
     if (scrollRef.current) {
       const amount = 300;

@@ -96,10 +96,9 @@ useEffect(() => {
 
     console.log("USUARIO PARA CARGAR FAVORITOS:", user);
 
-    if (!userId) {
-      dispatch({ type: "clear_Favoritos" });
-      return;
-    }
+    dispatch({ type: "clear_Favoritos" });
+
+    if (!userId) return;
 
     const favoritos = await obtenerFavoritos(userId);
 
@@ -110,6 +109,12 @@ useEffect(() => {
   }
 
   cargarFavoritos();
+
+  window.addEventListener("focus", cargarFavoritos);
+
+  return () => {
+    window.removeEventListener("focus", cargarFavoritos);
+  };
 }, []);
 
   return (
