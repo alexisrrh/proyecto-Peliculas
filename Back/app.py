@@ -153,7 +153,8 @@ def create_pelicula():
         "msg": "Película creada",
         "pelicula": nueva_pelicula.serialize()
     }), 201
-#ENDPOINT PARA CREAR FAVORITOS DEL USUARIO@app.route('/users/<int:user_id>/favoritos', methods=['POST'])
+#ENDPOINT PARA CREAR FAVORITOS DEL USUARIO
+@app.route('/users/<int:user_id>/favoritos', methods=['POST'])
 def create_user_favorito(user_id):
     body = request.get_json()
 
