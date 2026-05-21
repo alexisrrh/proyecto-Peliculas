@@ -88,9 +88,13 @@ console.log("TMDB_KEY:", TMDB_KEY);
 
   // CARGA DE FAVORITOS DE CADA USUARIO
 
+// CARGA DE FAVORITOS DE CADA USUARIO
 useEffect(() => {
   async function cargarFavoritos() {
-    const userId = localStorage.getItem("user_id");
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?.id;
+
+    console.log("USUARIO PARA CARGAR FAVORITOS:", user);
 
     if (!userId) {
       dispatch({ type: "clear_Favoritos" });

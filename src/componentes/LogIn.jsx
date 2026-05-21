@@ -24,7 +24,6 @@ const handleSubmit = async (e) => {
 
   localStorage.setItem("token", usuario.access_token);
   localStorage.setItem("user", JSON.stringify(usuario.user));
-  localStorage.setItem("user_id", usuario.user.id);
 
   navigate("/inicio");
 };
