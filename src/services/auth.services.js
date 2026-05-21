@@ -96,6 +96,7 @@ export async function Private() {
     }
 }
 
+// AGREGAR FAVORITOS// AGREGAR FAVORITOS
 // AGREGAR FAVORITOS
 export async function agregarFavorito(userId, pelicula) {
   try {
@@ -115,60 +116,63 @@ export async function agregarFavorito(userId, pelicula) {
       }),
     });
 
-    const data = await response.json();
+    const text = await response.text();
 
-    console.log("respuesta agregar favorito:", data);
+    console.log("STATUS FAVORITO:", response.status);
+    console.log("RESPUESTA FAVORITO:", text);
 
     if (!response.ok) {
-      console.error("fallo:", data);
       return null;
     }
 
-    return data;
+    return JSON.parse(text);
   } catch (error) {
     console.error("Error agregando favorito:", error);
     return null;
   }
 }
 
-// OBTENER FAVORITOS DE CADA USUARIO 
+// OBTENER FAVORITOS DE CADA USUARIO // OBTENER FAVORITOS
 export async function obtenerFavoritos(userId) {
   try {
     const response = await fetch(`${API_URL}/users/${userId}/favoritos`, {
       method: "GET",
     });
 
-    const data = await response.json();
+    const text = await response.text();
 
-    console.log("favoritos backend:", data);
+    console.log("STATUS OBTENER FAVORITOS:", response.status);
+    console.log("RESPUESTA OBTENER FAVORITOS:", text);
 
-    if (response.ok) {
-      return data.result;
-    } else {
-      console.error("fallo obteniendo favoritos:", data);
+    if (!response.ok) {
       return [];
     }
+
+    const data = JSON.parse(text);
+    return data.result;
   } catch (error) {
     console.error("Error obteniendo favoritos:", error);
     return [];
   }
 }
 
-// ELIMINAR FAVORITOS DE UN USUARIO 
+// ELIMINAR FAVORITOS DE UN USUARIO // ELIMINAR FAVORITO
 export async function eliminarFavorito(favoritoId) {
   try {
     const response = await fetch(`${API_URL}/favorite/${favoritoId}`, {
       method: "DELETE",
     });
 
-    const data = await response.json();
+    const text = await response.text();
 
-    if (response.ok) {
-      return data;
-    } else {
-      console.error("fallo eliminando favorito:", data);
+    console.log("STATUS ELIMINAR FAVORITO:", response.status);
+    console.log("RESPUESTA ELIMINAR FAVORITO:", text);
+
+    if (!response.ok) {
       return null;
     }
+
+    return JSON.parse(text);
   } catch (error) {
     console.error("Error eliminando favorito:", error);
     return null;

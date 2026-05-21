@@ -10,6 +10,8 @@ const PeliculasComedia = () => {
   const { state, dispatch } = useAppContext();
 
   const scrollRef = useRef(null);
+  const user = JSON.parse(localStorage.getItem("user"));
+const userId = user?.id;
 
   async function handleFavorito(item) {
         if (!userId) {
