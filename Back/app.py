@@ -22,6 +22,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configuraciones de la App
+
 db_url = os.getenv("SQLALCHEMY_DATABASE_URI")
 
 if db_url and db_url.startswith("postgres://"):
@@ -40,6 +41,7 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 # Panel de Administración
+
 admin = Admin(app, name="Peliculas DB")
 admin.add_view(ModelView(User, db))
 admin.add_view(ModelView(Pelicula, db))
@@ -54,6 +56,7 @@ def home():
 
 
 # Endpoint para pedir informacion de todos los usuarios
+
 @app.route('/user', methods=['GET'])
 def get_user():
     all_users = db.session.execute(select(User)).scalars().all()
@@ -69,6 +72,7 @@ def get_user():
 
 
 # Endpoint para pedir informacion de todas las peliculas
+
 @app.route('/peliculas', methods=['GET'])
 def get_peliculas():
     all_peliculas = db.session.execute(select(Pelicula)).scalars().all()
@@ -86,6 +90,7 @@ def get_peliculas():
 
 
 # Endpoint para pedir informacion de un usuario por su id
+
 @app.route('/user/<int:user_id>', methods=['GET'])
 def handle_user(user_id):
     user = db.session.get(User, user_id)
@@ -100,6 +105,7 @@ def handle_user(user_id):
 
 
 # Endpoint para pedir informacion de una pelicula por su id
+
 @app.route('/peliculas/<int:pelicula_id>', methods=['GET'])
 def handle_pelicula(pelicula_id):
     pelicula = db.session.get(Pelicula, pelicula_id)
@@ -113,6 +119,7 @@ def handle_pelicula(pelicula_id):
     return jsonify(response_body), 200
 
 #agregar peliculas a los modelos
+
 @app.route("/peliculas", methods=["POST"])
 def create_pelicula():
     body = request.get_json()
@@ -154,6 +161,7 @@ def create_pelicula():
         "pelicula": nueva_pelicula.serialize()
     }), 201
 #ENDPOINT PARA CREAR FAVORITOS DEL USUARIO
+
 @app.route('/users/<int:user_id>/favoritos', methods=['POST'])
 def create_user_favorito(user_id):
     body = request.get_json()
@@ -218,6 +226,7 @@ def create_user_favorito(user_id):
     }), 201
 
 # Endpoint de Login con verificación Bcrypt y Token JWT
+
 @app.route("/login", methods=["POST"])
 def login():
     body = request.get_json()
@@ -251,10 +260,12 @@ def login():
 
 
 # Endpoint Privado protegido por JWT
+
 @app.route("/private", methods=["GET"])
 @jwt_required()
 def private():
     # BORRA O COMENTA EL BLOQUE TRY/EXCEPT DEL ALTER TABLE
+
     email = get_jwt_identity()
     user = User.query.filter_by(email=email).first()
     
@@ -266,6 +277,7 @@ def private():
 
 
 # Endpoint de Registro con encriptación Bcrypt
+
 @app.route('/signup', methods=['POST'])
 def signup():
     body = request.get_json()
