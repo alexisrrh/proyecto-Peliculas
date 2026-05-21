@@ -246,17 +246,15 @@ def login():
 @app.route("/private", methods=["GET"])
 @jwt_required()
 def private():
-    # EJECUTAR ESTO UNA SOLA VEZ PARA CREAR LA COLUMNA
-    try:
-        db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS avatar VARCHAR(500)'))
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-
-    # Tu lógica normal...
+    # BORRA O COMENTA EL BLOQUE TRY/EXCEPT DEL ALTER TABLE
     email = get_jwt_identity()
     user = User.query.filter_by(email=email).first()
+    
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+        
     return jsonify(user.serialize()), 200
+
 
 
 # Endpoint de Registro con encriptación Bcrypt
@@ -325,33 +323,31 @@ def delete_favorite(favorito_id):
 @app.route("/update-avatar", methods=["PUT"])
 @jwt_required()
 def update_avatar():
-    # 1. Obtenemos la identidad del usuario desde el Token
-    email_usuario = get_jwt_identity()
-    
-    # 2. Buscamos al usuario en la tabla User
-    user = User.query.filter_by(email=email_usuario).first()
-    
-    if not user:
-        return jsonify({"msg": "Socio no localizado en los archivos"}), 404
-
-    # 3. Recibimos la nueva URL del avatar desde el frontend
-    data = request.get_json()
-    nuevo_avatar = data.get("avatar")
-
-    if not nuevo_avatar:
-        return jsonify({"msg": "No se recibió ninguna imagen"}), 400
-
-    # 4. Actualizamos la columna en la base de datos
     try:
-        user.avatar = nuevo_avatar
+        # Obtenemos el email del token JWT
+        email = get_jwt_identity()
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            return jsonify({"msg": "Usuario no encontrado"}), 404
+
+        # Obtenemos la nueva URL del body de la petición
+        data = request.get_json()
+        nueva_url = data.get("avatar")
+
+        if not nueva_url:
+            return jsonify({"msg": "Falta la URL del avatar"}), 400
+
+        # Guardamos en la base de datos
+        user.avatar = nueva_url
         db.session.commit()
-        return jsonify({
-            "msg": "Identidad visual actualizada con éxito",
-            "avatar": user.avatar
-        }), 200
+
+        return jsonify({"msg": "Avatar actualizado", "avatar": user.avatar}), 200
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({"msg": "Error al guardar en la base de datos", "error": str(e)}), 500
+        print(f"Error: {str(e)}")
+        return jsonify({"msg": "Error interno del servidor"}), 500
 
 
 

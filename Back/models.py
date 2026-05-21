@@ -21,7 +21,7 @@ class User(db.Model):
             "nombre": self.nombre,
             "apellido":self.apellido,
             "email": self.email,
-            "avatar": self.avatar 
+            # "avatar": getattr(self, 'avatar', None) 
         }
 
 
