@@ -6,23 +6,15 @@ import { AppRoutes } from "./routes/appRoutes";
 
 function Layout() {
   const location = useLocation();
-  
-  // 👇 Se añadió "/login" para no mostrar Navbar/Footer aquí tampoco
-  const isFullScreenPage = location.pathname === "/" || location.pathname === "/relax" || location.pathname === "/login" || location.pathname === "/registro" ;
+  const isFullScreenPage = location.pathname === "/relax" || location.pathname === "/login" || location.pathname === "/registro" || location.pathname === "/recuperarContraseña";
 
   return (
     <div className="flex flex-col min-h-screen relative text-white">
-      
-      {/* 1. EL FONDO (Siempre detrás) */}
       <StarBackground />
-    
-      {/* 2. EL CONTENIDO (Navbar y Footer se ocultan en Landing, Relax y Login) */}
       {!isFullScreenPage && <Navbar />}
-    
       <main className="flex-grow relative z-10">
         <AppRoutes />
       </main>
-
       {!isFullScreenPage && <Footer />}
     </div>
   );
