@@ -1,49 +1,37 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import {login  } from "../services/auth.services";
+import { useNavigate } from 'react-router-dom';
+import { login } from "../services/auth.services";
 
 const LogIn = () => {
-
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const[ email, setEmail] = useState("");
-  const[password, setPassword]= useState("");
-   
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
- 
+    const usuario = await login(email, password);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+    if (!usuario || usuario.msg !== "login exitoso") {
+      alert("usuario o contraseña incorrectos");
+      return;
+    }
 
-  const usuario = await login(email, password);
+    localStorage.setItem("token", usuario.access_token);
+    localStorage.setItem("user", JSON.stringify(usuario.user));
 
-  if (!usuario || usuario.msg !== "login exitoso") {
-    alert("usuario o contraseña incorrectos");
-    return;
-  }
-
-  localStorage.setItem("token", usuario.access_token);
-  localStorage.setItem("user", JSON.stringify(usuario.user));
-
-  navigate("/inicio");
-  window.location.reload();
-
-};
+    navigate("/");
+    window.location.reload();
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 font-mono relative overflow-hidden">
-      
-      {/* CAPA DE EFECTO CRT/VHS */}
       <div className="absolute inset-0 pointer-events-none z-0 opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,255,0,0.06))] bg-[length:100%_4px,3px_100%]"></div>
 
-      {/* CONTENEDOR DE LA TARJETA DE LOGIN */}
       <div className="relative z-10 w-full max-w-md bg-black/80 backdrop-blur-md border-2 border-cyan-500 p-8 shadow-[0_0_30px_rgba(6,182,212,0.3),inset_0_0_15px_rgba(6,182,212,0.2)] group">
         
-        {/* Barra superior estilo VHS */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-fuchsia-600 via-cyan-400 to-fuchsia-600"></div>
 
-        {/* Indicadores VHS decorativos */}
         <div className="absolute top-4 right-4 text-[10px] text-red-500 font-bold tracking-widest animate-pulse flex items-center gap-2">
           <div className="w-2 h-2 bg-red-500 rounded-full shadow-[0_0_5px_rgba(239,68,68,1)]"></div> REC
         </div>
@@ -51,7 +39,6 @@ const handleSubmit = async (e) => {
           SP Mode / Ch. 3
         </div>
 
-        {/* HEADER */}
         <div className="text-center mt-6 mb-10">
           <h2 className="text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400 drop-shadow-[0_0_10px_rgba(217,70,239,0.5)]">
             VHSFLIX
@@ -61,9 +48,7 @@ const handleSubmit = async (e) => {
           </p>
         </div>
 
-        {/* FORMULARIO */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          
           <div className="relative">
             <label className="block text-fuchsia-400 text-xs font-bold mb-2 uppercase tracking-widest flex items-center gap-2">
               <i className="fa-solid fa-user text-[10px]"></i> ID de Socio
@@ -98,24 +83,23 @@ const handleSubmit = async (e) => {
               <i className="fa-solid fa-play"></i>
               Insertar Cinta
             </span>
-          
           </button>
+          
           <div className='text-center flex justify-center gap-2'>
             <span className='text-center'>¿no eres miembro? </span>
-           <span onClick={()=> navigate('/registro')} className='className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2'> Registrate aqui </span>
-       </div>
+            <span onClick={()=> navigate('/registro')} className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2 cursor-pointer"> Registrate aqui </span>
+          </div>
         </form>
 
-        {/* ENLACES EXTRA */}
         <div className="mt-8 pt-6 border-t border-zinc-800 flex flex-col items-center gap-4 text-xs tracking-widest">
-        <button
-  type="button"
-  onClick={() => navigate("/recuperarContraseña")}
-  className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2 cursor-pointer"
->
-  <i className="fa-solid fa-triangle-exclamation text-[10px]"></i>
-  ¿Cinta atascada? (Recuperar clave)
-</button>
+          <button
+            type="button"
+            onClick={() => navigate("/recuperarContraseña")}
+            className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2 cursor-pointer"
+          >
+            <i className="fa-solid fa-triangle-exclamation text-[10px]"></i>
+            ¿Cinta atascada? (Recuperar clave)
+          </button>
         </div>
       </div>
     </div>

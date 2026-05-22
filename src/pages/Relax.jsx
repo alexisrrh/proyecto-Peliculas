@@ -3,14 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 const Relax = () => {
   const navigate = useNavigate();
-
   const [gameKey, setGameKey] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [leaderboard, setLeaderboard] = useState([]);
 
-  // =========================================================
-  // LÓGICA DE BASE DE DATOS (API / LOCALSTORAGE)
-  // =========================================================
   const fetchLeaderboard = async () => {
     try {
       const savedScores = localStorage.getItem('vhsflix_arcade_scores');
@@ -68,36 +64,27 @@ const Relax = () => {
       <title>Relax Mode Game - Combo System</title>
       <style>
         *, *:before, *:after { margin: 0; padding: 0; border: 0; box-sizing: border-box; }
-        
         html, body { 
           display: block; width: 100vw; height: 100vh; cursor: crosshair; 
           user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
-        
         body {
           overflow: hidden; position: relative; 
-          background-color: #000000; /* FONDO NEGRO PLANO */
+          background-color: #000000; 
           font-family: 'Courier New', Courier, monospace;
         }
-        
         #stageElement { display: block; position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: -1; }
-        
         #uiLayer {
           position: fixed; top: 20px; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: flex-start;
           padding: 0 5%; z-index: 100; pointer-events: none;
         }
-        
         .right-ui { display: flex; flex-direction: column; align-items: flex-end; }
-
         .arcade-text { font-size: clamp(20px, 4vw, 36px); font-weight: bold; color: #0ff; text-shadow: 0 0 10px #0ff, 0 0 20px #d946ef; transition: transform 0.1s; }
         #timerBoard { color: #f0f; text-shadow: 0 0 10px #f0f, 0 0 20px #0ff; }
-        
-        /* SISTEMA DE COMBOS CSS */
         #comboBoard { margin-top: 10px; transform-origin: right center; font-size: clamp(18px, 3.5vw, 32px); }
-        .combo-tier-1 { color: #39ff14 !important; text-shadow: 0 0 10px #39ff14, 0 0 20px #006400 !important; } /* Verde */
-        .combo-tier-2 { color: #ffaa00 !important; text-shadow: 0 0 10px #ffaa00, 0 0 20px #ff0000 !important; } /* Naranja/Dorado */
-        .combo-tier-3 { color: #f0f !important; text-shadow: 0 0 15px #f0f, 0 0 30px #ff00ff !important; } /* Rosa */
-        
+        .combo-tier-1 { color: #39ff14 !important; text-shadow: 0 0 10px #39ff14, 0 0 20px #006400 !important; } 
+        .combo-tier-2 { color: #ffaa00 !important; text-shadow: 0 0 10px #ffaa00, 0 0 20px #ff0000 !important; } 
+        .combo-tier-3 { color: #f0f !important; text-shadow: 0 0 15px #f0f, 0 0 30px #ff00ff !important; } 
         .combo-max { animation: rainbowPulse 0.4s infinite alternate; font-weight: 900; }
         @keyframes rainbowPulse {
           0% { color: #ff0000; text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; transform: scale(1.2) rotate(-2deg); }
@@ -106,7 +93,6 @@ const Relax = () => {
           75% { color: #0ff; text-shadow: 0 0 20px #0ff, 0 0 40px #0ff; transform: scale(1.3) rotate(0deg); }
           100% { color: #f0f; text-shadow: 0 0 20px #f0f, 0 0 40px #f0f; transform: scale(1.2) rotate(-2deg); }
         }
-
         .combo-break { animation: shakeBreak 0.4s; color: #ff0000 !important; text-shadow: 0 0 15px #ff0000 !important; }
         @keyframes shakeBreak {
           0% { transform: translateX(0) scale(1.2); }
@@ -115,17 +101,14 @@ const Relax = () => {
           75% { transform: translateX(-15px) scale(1.2); }
           100% { transform: translateX(0) scale(1); }
         }
-
         #gameOverScreen {
           display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
           flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
         @media (min-width: 1024px) { #gameOverScreen { padding-right: 400px; } }
-
         .go-title { font-size: clamp(40px, 8vw, 70px); color: #f0f; text-shadow: 0 0 20px #f0f; margin-bottom: 20px; animation: blink 1s infinite; font-weight: 900;}
         .go-score { font-size: clamp(25px, 5vw, 40px); color: #0ff; margin-bottom: 10px; font-weight: bold; text-align: center;}
         .go-stats { font-size: clamp(18px, 3vw, 24px); color: #fff; margin-bottom: 40px; font-weight: bold; text-align: center; line-height: 1.5;}
-        
         .input-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;}
         #initials {
           background: transparent; border: 3px solid #0ff; color: #fff; font-size: clamp(30px, 5vw, 40px); font-family: 'Courier New', monospace;
@@ -137,7 +120,6 @@ const Relax = () => {
         }
         .arcade-btn:hover { background: #0ff; box-shadow: 0 0 20px #0ff; transform: scale(1.05); }
         .restart-btn { background: #0ff; box-shadow: 0 0 15px #0ff; margin-top: 30px; display: none; }
-        
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
       </style>
     </head>
@@ -149,7 +131,6 @@ const Relax = () => {
           <div id="comboBoard" class="arcade-text" style="display: none;">COMBO x2</div>
         </div>
       </div>
-
       <div id="gameOverScreen">
         <div class="go-title" id="gameOverTitle">TIME OVER</div>
         <div class="go-score">FINAL SCORE: <br><span id="finalScoreVal" style="font-size: 1.5em; color: #ffd700;"></span></div>
@@ -157,12 +138,10 @@ const Relax = () => {
           BULLETS FIRED: <span id="finalShotsVal" style="color: #f0f;"></span><br>
           MAX COMBO: <span id="finalComboVal" style="color: #39ff14;"></span>
         </div>
-        
         <div class="input-group" id="inputSection">
           <input type="text" id="initials" maxlength="3" placeholder="AAA" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '')" autocomplete="off" />
           <button id="saveBtn" class="arcade-btn" onclick="submitScore()">SAVE</button>
         </div>
-        
         <div id="savedMsg" style="display:none; color:#0ff; font-size:clamp(25px, 5vw, 35px); margin-top:20px; font-weight: bold;">SCORE SAVED!</div>
         <button id="restartBtn" class="arcade-btn restart-btn" onclick="restartGame()">PLAY AGAIN</button>
       </div>
@@ -175,10 +154,8 @@ const Relax = () => {
         let timeLeft = 50;
         let currentScore = 0;
         let totalShots = 0; 
-        
-        // --- SISTEMA DE COMBOS CORREGIDO ---
-        let consecutiveHits = 0; // Cuenta de aciertos seguidos
-        let comboMultiplier = 1; // Multiplicador real de puntos
+        let consecutiveHits = 0; 
+        let comboMultiplier = 1; 
         let maxComboReached = 1;
         let comboTimeout = null;
 
@@ -188,7 +165,6 @@ const Relax = () => {
           if(currentScore < 0) currentScore = 0;
           document.getElementById('scoreBoard').innerText = 'SCORE: ' + currentScore;
           
-          // Efecto Pop en el score
           const scBoard = document.getElementById('scoreBoard');
           scBoard.style.transform = 'scale(1.2)';
           setTimeout(() => { if(scBoard) scBoard.style.transform = 'scale(1)'; }, 100);
@@ -196,7 +172,6 @@ const Relax = () => {
 
         const updateComboUI = () => {
           const comboEl = document.getElementById('comboBoard');
-          // Solo mostramos UI si el multiplicador es 2 o mayor
           if (comboMultiplier < 2) {
             comboEl.style.display = 'none';
             return;
@@ -204,20 +179,18 @@ const Relax = () => {
           
           comboEl.style.display = 'block';
           comboEl.innerText = 'COMBO x' + comboMultiplier;
-          comboEl.className = 'arcade-text'; // Reset clases
+          comboEl.className = 'arcade-text'; 
           
-          // Asignar colores según Tiers
           if (comboMultiplier >= 15) {
-            comboEl.classList.add('combo-max'); // MÁXIMO (Destellos arcoíris)
+            comboEl.classList.add('combo-max'); 
           } else if (comboMultiplier >= 10) {
-            comboEl.classList.add('combo-tier-3'); // Rosa
+            comboEl.classList.add('combo-tier-3'); 
           } else if (comboMultiplier >= 5) {
-            comboEl.classList.add('combo-tier-2'); // Naranja
+            comboEl.classList.add('combo-tier-2'); 
           } else if (comboMultiplier >= 2) {
-            comboEl.classList.add('combo-tier-1'); // Verde
+            comboEl.classList.add('combo-tier-1'); 
           }
 
-          // Pop effect solo si no está en modo max
           if(comboMultiplier < 15) {
             comboEl.style.transform = 'scale(1.3)';
             clearTimeout(comboTimeout);
@@ -226,7 +199,6 @@ const Relax = () => {
         };
 
         const breakCombo = () => {
-          // Solo castigamos con cartel si realmente había un combo construido (>=2)
           if (comboMultiplier > 1) {
             const comboEl = document.getElementById('comboBoard');
             comboEl.innerText = 'COMBO BROKEN!';
@@ -236,12 +208,10 @@ const Relax = () => {
             consecutiveHits = 0;
             comboMultiplier = 1;
             
-            // Dejar el cartel rojo roto en pantalla un momento antes de desaparecerlo
             setTimeout(() => {
                 updateComboUI(); 
             }, 600);
           } else {
-            // Si falla en el primer tiro (o no tenía combo), se reinicia silenciosamente
             consecutiveHits = 0;
             comboMultiplier = 1;
           }
@@ -281,7 +251,6 @@ const Relax = () => {
           window.parent.postMessage({ type: 'RESTART' }, '*');
         };
 
-        // MATERIALES
         const mat10 = new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: true }); 
         const mat20 = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true }); 
         const mat30 = new THREE.MeshBasicMaterial({ color: 0xffaa00, wireframe: true }); 
@@ -406,8 +375,7 @@ const Relax = () => {
             if(!gameActive) return;
             totalShots++; 
             
-            // EL COLOR DE LA BALA CAMBIA SEGÚN EL COMBO!
-            let colorHex = 0x00ffff; // Base Cyan
+            let colorHex = 0x00ffff;
             if (comboMultiplier >= 15) { colorHex = new THREE.Color().setHSL(Math.random(), 1, 0.5); } 
             else if (comboMultiplier >= 10) { colorHex = 0xff00ff; } 
             else if (comboMultiplier >= 5) { colorHex = 0xffaa00; } 
@@ -436,9 +404,7 @@ const Relax = () => {
               let s = this.shots[ i ]; 
               
               if ( s.position.z < -4000 ) { 
-                // === PENALIZACIÓN POR FALLAR DISPARO (BALA PERDIDA) ===
                 breakCombo();
-                
                 this.shots.splice( i, 1 ); this.scene.remove( s ); continue; 
               }
               
@@ -476,25 +442,18 @@ const Relax = () => {
 
                 asteroidsManager.scene.remove(ast); asteroidsManager.asteroids.splice(j, 1);
                 
-                // === LÓGICA DE IMPACTO ===
                 if(type === 'death') {
                   breakCombo();
                   endGame("GAME OVER");
                 } else if (type === 'penalty') {
                   breakCombo();
-                  updateScore(points); // -30 (o lo que valga la penalización)
+                  updateScore(points);
                 } else if(type === 'time') {
                   timeLeft += 10; 
                 } else {
-                  // ACIERTO EXITOSO
                   consecutiveHits++;
-                  
-                  // El multiplicador se activa a partir del 2do impacto seguido, con un máximo de 15
                   comboMultiplier = consecutiveHits >= 2 ? Math.min(consecutiveHits, 15) : 1;
-                  
                   if (comboMultiplier > maxComboReached) maxComboReached = comboMultiplier;
-                  
-                  // Los puntos se multiplican por el combo
                   updateScore(points * comboMultiplier);
                   updateComboUI();
                 }
@@ -552,22 +511,15 @@ const Relax = () => {
   return (
     <div className="relative w-full h-screen bg-black select-none font-mono overflow-hidden">
       
-      {/* BOTÓN VOLVER */}
       <button 
         onClick={() => {
-          const user = localStorage.getItem("user");
-          if (user) {
-            navigate('/inicio'); 
-          } else {
-            navigate('/'); 
-          }
+          navigate('/'); 
         }}
         className="absolute bottom-6 left-6 z-50 bg-black/80 border-2 border-fuchsia-500 text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white px-4 py-2 uppercase font-bold transition-all shadow-[0_0_15px_rgba(217,70,239,0.8)] cursor-pointer backdrop-blur-md rounded-md"
       >
         VOLVER
       </button>
 
-      {/* LEADERBOARD */}
       {isGameOver && (
         <div className="absolute top-4 right-4 md:top-1/2 md:-translate-y-1/2 md:right-10 z-40 bg-black/85 border-4 border-fuchsia-500 p-6 w-[90%] md:w-80 lg:w-96 max-h-[50vh] md:max-h-[80vh] overflow-y-auto backdrop-blur-md shadow-[0_0_30px_rgba(217,70,239,0.7)] pointer-events-auto rounded-xl custom-scrollbar">
           <h2 className="text-center text-fuchsia-400 text-2xl md:text-3xl font-black tracking-widest mb-4 border-b-2 border-fuchsia-500 pb-2 uppercase animate-pulse">

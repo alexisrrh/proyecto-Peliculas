@@ -3,10 +3,9 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import logo from '../assets/logo1.png'
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAppContext } from '../context/AppContext';
 
 const navigation = [
-  { name: 'Inicio', href: '/inicio', current: true },
+  { name: 'Inicio', href: '/', current: true },
   { name: 'Categorías', href: '#', current: false },
   { name: 'Favoritos', href: '/favoritos', current: false },
   { name: 'Perfil', href: '/usuario/:id', current: false },
@@ -18,7 +17,7 @@ const Navbar = () => {
   const navigate = useNavigate()
   const user = localStorage.getItem("user");
   const [showCategories, setShowCategories] = useState(false);
-  const location = useLocation(); // Detecta la ruta actual
+  const location = useLocation();
   const categories = ["Populares", "Accion", "Terror", "Comedia", "Animadas"];
 
   const busqueda = (e) => {
@@ -26,7 +25,7 @@ const Navbar = () => {
     setBusqueda(texto);
     
     if (texto.trim() === "") {
-      navigate("/inicio"); 
+      navigate("/"); 
     } else {
       navigate(`/search/${texto}`);
     }
@@ -39,7 +38,6 @@ const Navbar = () => {
       <div className="mx-auto px-2 md:px-6 lg:px-8">
         <div className="relative flex h-20 items-center justify-between">
 
-          {/* 1. BOTÓN MÓVIL */}
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white">
               <Bars3Icon className="block size-6 group-data-open:hidden" />
@@ -47,7 +45,6 @@ const Navbar = () => {
             </DisclosureButton>
           </div>
 
-          {/* 2. LADO IZQUIERDO: LOGO Y LINKS */}
           <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             <div className="flex shrink-0 items-center">
               <img alt="Ipanema Logo" src={logo} className="h-16 w-auto" />
@@ -103,7 +100,7 @@ const Navbar = () => {
                     to={item.href} 
                     className={`text-lg font-medium transition-colors ${
                       isActive(item.href) ? 'text-yellow-400' : 'text-white hover:text-gray-300'
-                    } ${item.name === 'Relax' ? 'hover:text-fuchsia-500 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.8)]' : ''}`} // <-- Pequeño efecto neón extra opcional para el botón Relax
+                    } ${item.name === 'Relax' ? 'hover:text-fuchsia-500 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.8)]' : ''}`}
                   >
                     {item.name}
                   </Link>
@@ -112,7 +109,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* 3. LADO DERECHO: BUSCADOR */}
           <div className="hidden md:flex items-center ml-4 gap-4">
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -153,13 +149,12 @@ const Navbar = () => {
         </div> 
       </div> 
 
-      {/* PANEL MÓVIL */}
       <DisclosurePanel className="md:hidden bg-black/90">
         <div className="space-y-1 px-2 pt-2 pb-3">
           {navigation.map((item) => (
             <DisclosureButton
               key={item.name}
-              as={Link} // Cambiado de "a" a "Link" para evitar recargar la página completa en modo móvil
+              as={Link}
               to={item.href} 
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white"
             >
