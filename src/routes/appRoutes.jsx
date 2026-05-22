@@ -10,7 +10,7 @@ import Relax from "../pages/Relax";
 // 1. Importar el componente
 import LogIn from "../componentes/LogIn"; 
 import Registro from "../componentes/Registro";
-
+import RecuperarContraseña from "../componentes/RecuperarContraseña";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -31,6 +31,7 @@ export const AppRoutes = () => {
       <Route path="/usuario/:id" element={<PerfilUsuario/>} />
       <Route path="/registro"  element={<Registro/>}/>
       <Route path="*" element={<Navigate to="/" />} />
+     <Route path="/recuperarContraseña"  element={<RecuperarContraseña/>}/>
     </Routes>
   );
 };
