@@ -72,26 +72,40 @@ export async function Private() {
     const token = localStorage.getItem("token");
     if (!token) return null;
 
-    const requestOptions = {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` },
-    };
-
     try {
-        const response = await fetch(`${API_URL}/private`, requestOptions);
+        const response = await fetch(`${API_URL}/private`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
         
-        // 1. Verificamos si la respuesta es exitosa ANTES de hacer .json()
-        if (!response.ok) {
-            const errorText = await response.text(); // Leemos el error como texto
-            console.error("Error del servidor (HTML):", errorText);
-            return null;
-        }
-
-        const data = await response.json();
-        return data;
-
+        if (!response.ok) return null;
+        return await response.json();
     } catch (error) {
-        console.error('Error de conexión o parseo:', error);
+        console.error('Error:', error);
+        return null;
+    }
+}
+
+
+//AVATAR
+export async function actualizarAvatarEnDB(nuevaUrl) {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await fetch(`${API_URL}/update-avatar`, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ avatar: nuevaUrl })
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+        return null;
+    } catch (error) {
+        console.error("Error al guardar avatar:", error);
         return null;
     }
 }

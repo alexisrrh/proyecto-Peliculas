@@ -21,6 +21,21 @@ load_dotenv()
 
 app = Flask(__name__)
 
+# --- BLOQUE PARA CREAR LA COLUMNA EN RENDER ---
+from sqlalchemy import text
+with app.app_context():
+    try:
+        # Intentamos ver si la columna ya existe
+        db.session.execute(text('SELECT avatar FROM "user" LIMIT 1'))
+    except Exception:
+        # Si falla, es que no existe, así que la añadimos
+        print("Añadiendo columna 'avatar' a la tabla 'user'...")
+        db.session.rollback()
+        # Nota: Usamos "user" entre comillas porque en Postgres es una palabra reservada
+        db.session.execute(text('ALTER TABLE "user" ADD COLUMN avatar VARCHAR(500) DEFAULT \'\''))
+        db.session.commit()
+        print("¡Columna añadida con éxito!")
+
 # Configuraciones de la App
 
 db_url = os.getenv("SQLALCHEMY_DATABASE_URI")
@@ -264,10 +279,8 @@ def login():
 @app.route("/private", methods=["GET"])
 @jwt_required()
 def private():
-    # BORRA O COMENTA EL BLOQUE TRY/EXCEPT DEL ALTER TABLE
-
     email = get_jwt_identity()
-    user = User.query.filter_by(email=email).first()
+    user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
     
     if not user:
         return jsonify({"msg": "Usuario no encontrado"}), 404
@@ -340,25 +353,24 @@ def delete_favorite(favorito_id):
 
     return jsonify({"msg": "Favorito eliminado"}), 200
 
+#avatar
+
 @app.route("/update-avatar", methods=["PUT"])
 @jwt_required()
 def update_avatar():
     try:
-        # Obtenemos el email del token JWT
         email = get_jwt_identity()
-        user = User.query.filter_by(email=email).first()
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
 
         if not user:
             return jsonify({"msg": "Usuario no encontrado"}), 404
 
-        # Obtenemos la nueva URL del body de la petición
         data = request.get_json()
         nueva_url = data.get("avatar")
 
         if not nueva_url:
             return jsonify({"msg": "Falta la URL del avatar"}), 400
 
-        # Guardamos en la base de datos
         user.avatar = nueva_url
         db.session.commit()
 
@@ -366,10 +378,7 @@ def update_avatar():
 
     except Exception as e:
         db.session.rollback()
-        print(f"Error: {str(e)}")
-        return jsonify({"msg": "Error interno del servidor"}), 500
-
-
+        return jsonify({"msg": "Error interno", "error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -13,15 +13,20 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str]=mapped_column(nullable=False)
     favoritos: Mapped[List["Favorito"]] = relationship("Favorito", back_populates="user")
-    avatar: Mapped[str] = mapped_column(String(500), nullable=True, default="https://pinimg.com")
+    avatar: Mapped[str] = mapped_column(String(500), nullable=True, default="")
 
     def serialize(self):
+        # Si no hay avatar, devolvemos un avatar generado por su email (siempre funciona)
+        img_final = self.avatar
+        if not img_final or img_final == "" or "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg" in img_final:
+            img_final = f"https://dicebear.com{self.email}"
+
         return {
             "id": self.id,
             "nombre": self.nombre,
             "apellido":self.apellido,
             "email": self.email,
-            # "avatar": getattr(self, 'avatar', None) 
+            "avatar": img_final
         }
 
 
