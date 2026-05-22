@@ -26,7 +26,7 @@ const Navbar = () => {
     setBusqueda(texto);
     
     if (texto.trim() === "") {
-      navigate("/"); 
+      navigate("/inicio"); 
     } else {
       navigate(`/search/${texto}`);
     }

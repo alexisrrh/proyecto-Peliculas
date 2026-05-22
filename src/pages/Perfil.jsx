@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Private, actualizarAvatarEnDB } from '../services/auth.services';
 
 export const PerfilUsuario = () => {
     const [usuario, setUsuario] = useState(null);
