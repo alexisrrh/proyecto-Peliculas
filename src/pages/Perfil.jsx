@@ -4,7 +4,7 @@ import { Private, actualizarAvatarEnDB } from '../services/auth.services';
 export const PerfilUsuario = () => {
     const [usuario, setUsuario] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [avatarActual, setAvatarActual] = useState("https://pinimg.com");
+    const [avatarActual, setAvatarActual] = useState("https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg");
     const [editando, setEditando] = useState(false);
 
 const opcionesAvatares = [

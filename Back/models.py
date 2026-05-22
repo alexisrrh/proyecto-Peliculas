@@ -19,7 +19,7 @@ class User(db.Model):
         # Si no hay avatar, devolvemos un avatar generado por su email (siempre funciona)
         img_final = self.avatar
         if not img_final or img_final == "" or "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg" in img_final:
-            img_final = f"https://dicebear.com{self.email}"
+            img_final = f"https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg{self.email}"
 
         return {
             "id": self.id,
