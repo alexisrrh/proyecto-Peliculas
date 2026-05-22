@@ -120,9 +120,14 @@ export default function Registro() {
 
         {/* ENLACES EXTRA */}
         <div className="mt-8 pt-6 border-t border-zinc-800 flex flex-col items-center gap-4 text-xs tracking-widest">
-          <a href="#" className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2">
-            <i className="fa-solid fa-triangle-exclamation text-[10px]"></i> ¿Cinta atascada? (Recuperar clave)
-          </a>
+          <button
+  type="button"
+  onClick={() => navigate("/recuperarContraseña")}
+  className="text-zinc-500 hover:text-cyan-400 transition-colors flex items-center gap-2 cursor-pointer"
+>
+  <i className="fa-solid fa-triangle-exclamation text-[10px]"></i>
+  ¿Cinta atascada? (Recuperar clave)
+</button>
         </div>
       </div>
     </div>
