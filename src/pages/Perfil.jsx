@@ -49,9 +49,10 @@ const opcionesAvatares = [
         // FUNCIÓN PARA GUARDAR EL AVATAR EN EL BACKEND
     const actualizarAvatar = async (nuevaUrl) => {
         const token = localStorage.getItem("token");
+        console.log(nuevaUrl);
         try {
             // Asumimos que tienes un endpoint /update-avatar o similar en tu backend
-            const response = await fetch(`${API_URL}/update-avatar`, {
+            const response = await fetch(`https://proyecto-peliculas-1-iiml.onrender.com/update-avatar`, {
                 method: 'PUT',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
@@ -59,7 +60,8 @@ const opcionesAvatares = [
                 },
                 body: JSON.stringify({ avatar: nuevaUrl })
             });
-
+            console.log(response)
+            // setAvatarActual(nuevaUrl); setEditando(false); 
             if (response.ok) {
                 setAvatarActual(nuevaUrl);
                 setEditando(false);
@@ -153,7 +155,7 @@ const opcionesAvatares = [
                                     {opcionesAvatares.map((img, i) => (
                                         <button 
                                             key={i} 
-                                            onClick={() => { setAvatarActual(img); setEditando(false); }}
+                                            onClick={() => {actualizarAvatar(img)}}
                                             className={`border-2 transition-all ${avatarActual === img ? 'border-pink-500 scale-110 shadow-[0_0_10px_rgba(236,72,153,0.8)]' : 'border-zinc-700'}`}
                                         >
                                             <img src={img} className="w-full aspect-square object-cover grayscale" />
