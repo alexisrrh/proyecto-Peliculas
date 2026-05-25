@@ -50,21 +50,6 @@ admin.add_view(ModelView(Pelicula, db))
 admin.add_view(ModelView(Favorito, db))
 
 
-# --- BLOQUE PARA CREAR LA COLUMNA EN RENDER ---
-from sqlalchemy import text
-with app.app_context():
-    try:
-        # Intentamos ver si la columna ya existe
-        db.session.execute(text('SELECT avatar FROM "user" LIMIT 1'))
-    except Exception:
-        # Si falla, es que no existe, así que la añadimos
-        print("Añadiendo columna 'avatar' a la tabla 'user'...")
-        db.session.rollback()
-        # Nota: Usamos "user" entre comillas porque en Postgres es una palabra reservada
-        db.session.execute(text('ALTER TABLE "user" ADD COLUMN avatar VARCHAR(500) DEFAULT \'\''))
-        db.session.commit()
-        print("¡Columna añadida con éxito!")
-
 @app.route("/")
 def home():
     return jsonify({
