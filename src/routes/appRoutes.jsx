@@ -5,20 +5,17 @@ import Modal from "../componentes/Modal";
 import Search from "../pages/Busqueda";
 import Categorias from "../pages/Categorias";
 import { PerfilUsuario } from "../pages/Perfil";
-import LandingPage from "../pages/LandingPage";
 import Relax from "../pages/Relax"; 
-// 1. Importar el componente
 import LogIn from "../componentes/LogIn"; 
 import Registro from "../componentes/Registro";
 import RecuperarContraseña from "../componentes/RecuperarContraseña";
+
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/inicio" element={<Home />} />
-      
+      <Route path="/" element={<Home />} />
+      <Route path="/inicio" element={<Navigate to="/" />} />
       <Route path="/login" element={<LogIn />} />
-      
       <Route path="/relax" element={<Relax />} />
       <Route path="/favoritos" element={<Favoritos />} />
       <Route path="/populares" element={<Categorias />} />
@@ -30,8 +27,8 @@ export const AppRoutes = () => {
       <Route path="/search/:texto?" element={<Search />} />
       <Route path="/usuario/:id" element={<PerfilUsuario/>} />
       <Route path="/registro"  element={<Registro/>}/>
+      <Route path="/recuperarContraseña"  element={<RecuperarContraseña/>}/>
       <Route path="*" element={<Navigate to="/" />} />
-     <Route path="/recuperarContraseña"  element={<RecuperarContraseña/>}/>
     </Routes>
   );
 };
