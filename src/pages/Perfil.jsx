@@ -72,23 +72,25 @@ const opcionesAvatares = [
         console.log(response);
 
         if (response.ok) {
+    const usuarioActualizado = {
+        ...usuario,
+        avatar: nuevaUrl
+    };
 
-            const data = await response.json();
+    setAvatarActual(nuevaUrl);
+    setUsuario(usuarioActualizado);
 
-            setAvatarActual(data.user.avatar);
+    localStorage.setItem(
+        "user",
+        JSON.stringify(usuarioActualizado)
+    );
 
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
-            );
+    setEditando(false);
 
-            setUsuario(data.user);
+    console.log("Avatar actualizado en pantalla y base de datos");
+}
 
-            setEditando(false);
-
-            console.log("Avatar actualizado en la base de datos");
-
-        } else {
+    else {
 
             console.error("No se pudo guardar el avatar en el servidor");
 
