@@ -71,13 +71,15 @@ const opcionesAvatares = [
 
         console.log(response);
 
-        if (response.ok) {
+if (response.ok) {
+    const data = await response.json();
+
     const usuarioActualizado = {
         ...usuario,
-        avatar: nuevaUrl
+        avatar: data.avatar
     };
 
-    setAvatarActual(nuevaUrl);
+    setAvatarActual(data.avatar);
     setUsuario(usuarioActualizado);
 
     localStorage.setItem(
@@ -87,7 +89,7 @@ const opcionesAvatares = [
 
     setEditando(false);
 
-    console.log("Avatar actualizado en pantalla y base de datos");
+    console.log("Avatar actualizado:", data.avatar);
 }
 
     else {
