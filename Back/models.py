@@ -17,18 +17,7 @@ class User(db.Model):
         "Favorito",
         back_populates="user"
     )
-  class User(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    nombre: Mapped[str] = mapped_column(String(120), nullable=False)
-    apellido: Mapped[str] = mapped_column(String(120), nullable=False)
-    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(nullable=False)
-    avatar: Mapped[str] = mapped_column(String(500), nullable=True, default="")
 
-    favoritos: Mapped[List["Favorito"]] = relationship(
-        "Favorito",
-        back_populates="user"
-    )
 
     def serialize(self):
         default_avatar = "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg"
