@@ -18,7 +18,7 @@ class User(db.Model):
         back_populates="user"
     )
 
-  def serialize(self):
+def serialize(self):
     default_avatar = "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg"
 
     if not self.avatar or self.avatar == "":
