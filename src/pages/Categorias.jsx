@@ -1,12 +1,17 @@
 import React from "react";
 import { useAppContext } from "../context/AppContext";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 import { agregarFavorito } from "../services/auth.services";
 
 const Categorias = () => {
   const { state, dispatch } = useAppContext();
   const location = useLocation();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
+  const handlePeliculaClick = (item) => {
+    token ? navigate(`/modal/${item.id}`) : navigate("/login");
+  };
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
 
@@ -56,13 +61,12 @@ const Categorias = () => {
             className="max-w-[300px] group relative shrink-0 shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
             <div className="relative h-[400px] rounded-2xl overflow-hidden">
-              <Link to={`/modal/${item.id}`}>
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                  alt={item.title}
-                  className="h-full w-full rounded-2xl object-cover transition duration-500 hover:rotate-2 hover:grayscale"
-                />
-              </Link>
+                      <img
+  onClick={() => handlePeliculaClick(item)}
+  src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+  alt={item.title}
+  className="h-full rounded-2xl w-full hover:rotate-2 object-cover transition duration-500 hover:grayscale-100 cursor-pointer"
+/>
 
               <div className="absolute top-0 left-0 right-0 flex items-start justify-between gap-3 p-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500">
                 <h3 className="text-lg font-semibold text-white">
