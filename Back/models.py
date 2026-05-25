@@ -5,33 +5,38 @@ from typing import List
 
 db = SQLAlchemy()
 
-# USER
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     nombre: Mapped[str] = mapped_column(String(120), nullable=False)
-    apellido: Mapped[str]=mapped_column(String(120), nullable=False)
+    apellido: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password: Mapped[str]=mapped_column(nullable=False)
-    favoritos: Mapped[List["Favorito"]] = relationship("Favorito", back_populates="user")
+    password: Mapped[str] = mapped_column(nullable=False)
     avatar: Mapped[str] = mapped_column(String(500), nullable=True, default="")
 
-def serialize(self):
-    default_avatar = "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg"
-    
-    # Si el avatar es None, o está vacío, o tiene el link roto base:
-    if not self.avatar or self.avatar == "" or self.avatar == "https://i.pinimg.com/736x/1e/e8/8a/1ee88a173e942bada798a19fd02f715f.jpg":
-        img_final = default_avatar
-    else:
-        # Si tiene cualquier otra cosa (Avatar 2, 3, 4 o cualquier URL), la respetamos
-        img_final = self.avatar
+    favoritos: Mapped[List["Favorito"]] = relationship(
+        "Favorito",
+        back_populates="user"
+    )
 
-    return {
-        "id": self.id,
-        "nombre": self.nombre,
-        "apellido": self.apellido,
-        "email": self.email,
-        "avatar": img_final
-    }
+    def serialize(self):
+        default_avatar = "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg"
+
+        if (
+            not self.avatar
+            or self.avatar == ""
+            or self.avatar == "https://i.pinimg.com/736x/1e/e8/8a/1ee88a173e942bada798a19fd02f715f.jpg"
+        ):
+            img_final = default_avatar
+        else:
+            img_final = self.avatar
+
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "apellido": self.apellido,
+            "email": self.email,
+            "avatar": img_final
+        }
 
 
 # PELICULA
