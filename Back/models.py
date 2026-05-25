@@ -18,25 +18,21 @@ class User(db.Model):
         back_populates="user"
     )
 
-    def serialize(self):
-        default_avatar = "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg"
+  def serialize(self):
+    default_avatar = "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg"
 
-        if (
-            not self.avatar
-            or self.avatar == ""
-            or self.avatar == "https://i.pinimg.com/736x/1e/e8/8a/1ee88a173e942bada798a19fd02f715f.jpg"
-        ):
-            img_final = default_avatar
-        else:
-            img_final = self.avatar
+    if not self.avatar or self.avatar == "":
+        img_final = default_avatar
+    else:
+        img_final = self.avatar
 
-        return {
-            "id": self.id,
-            "nombre": self.nombre,
-            "apellido": self.apellido,
-            "email": self.email,
-            "avatar": img_final
-        }
+    return {
+        "id": self.id,
+        "nombre": self.nombre,
+        "apellido": self.apellido,
+        "email": self.email,
+        "avatar": img_final
+    }
 
 
 # PELICULA
