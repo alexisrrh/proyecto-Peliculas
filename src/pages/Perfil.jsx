@@ -47,32 +47,59 @@ const opcionesAvatares = [
     }, []);
 
         // FUNCIÓN PARA GUARDAR EL AVATAR EN EL BACKEND
-    const actualizarAvatar = async (nuevaUrl) => {
-        const token = localStorage.getItem("token");
-        console.log(nuevaUrl);
-        try {
-            // Asumimos que tienes un endpoint /update-avatar o similar en tu backend
-            const response = await fetch(`https://proyecto-peliculas-1-iiml.onrender.com/update-avatar`, {
+ const actualizarAvatar = async (nuevaUrl) => {
+
+    const token = localStorage.getItem("token");
+
+    console.log(nuevaUrl);
+
+    try {
+
+        const response = await fetch(
+            `https://proyecto-peliculas-1-iiml.onrender.com/update-avatar`,
+            {
                 method: 'PUT',
-                headers: { 
+                headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ avatar: nuevaUrl })
-            });
-            console.log(response)
-            // setAvatarActual(nuevaUrl); setEditando(false); 
-            if (response.ok) {
-                setAvatarActual(nuevaUrl);
-                setEditando(false);
-                console.log("Avatar actualizado en la base de datos");
-            } else {
-                console.error("No se pudo guardar el avatar en el servidor");
+                body: JSON.stringify({
+                    avatar: nuevaUrl
+                })
             }
-        } catch (error) {
-            console.error("Error al guardar avatar:", error);
+        );
+
+        console.log(response);
+
+        if (response.ok) {
+
+            const data = await response.json();
+
+            setAvatarActual(data.user.avatar);
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
+
+            setUsuario(data.user);
+
+            setEditando(false);
+
+            console.log("Avatar actualizado en la base de datos");
+
+        } else {
+
+            console.error("No se pudo guardar el avatar en el servidor");
+
         }
-    };
+
+    } catch (error) {
+
+        console.error("Error al guardar avatar:", error);
+
+    }
+};
 
     if (loading) return (
         <div className="flex items-center justify-center font-mono p-20">
