@@ -40,9 +40,14 @@ CORS(
         "http://localhost:5173",
         "https://vhsflix.vercel.app"
     ]}},
-    supports_credentials=True
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )
-
+@app.before_request
+def handle_options():
+    if request.method == "OPTIONS":
+        return jsonify({"msg": "ok"}), 200
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
