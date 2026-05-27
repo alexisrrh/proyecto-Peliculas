@@ -2,7 +2,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List
-from datetime import datetime, timezone
+from sqlalchemy import String, Integer, ForeignKey, DateTime, Boolean
+from datetime import datetime, timezone, timedelta
 
 db = SQLAlchemy()
 
@@ -118,3 +119,19 @@ class ArcadeScore(db.Model):
             "score": self.score,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }
+    # PASSWORD RESET TOKEN
+class PasswordResetToken(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    token: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id"),
+        nullable=False
+    )
+
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+    used: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    user: Mapped["User"] = relationship("User")
