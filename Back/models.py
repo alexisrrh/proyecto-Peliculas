@@ -1,7 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy import String, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
@@ -69,9 +70,7 @@ class Pelicula(db.Model):
         }
 
 
-# -------------------
 # FAVORITOS
-# -------------------
 class Favorito(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -83,15 +82,34 @@ class Favorito(db.Model):
 
     def serialize(self):
         return {
-        "favorito_id": self.id,
-        "user_id": self.user_id,
+            "favorito_id": self.id,
+            "user_id": self.user_id,
+            "id": self.pelicula.tmdb_id,
+            "title": self.pelicula.titulo,
+            "overview": self.pelicula.overview,
+            "poster_path": self.pelicula.poster_path,
+            "backdrop_path": self.pelicula.backdrop_path,
+            "release_date": self.pelicula.release_date,
+            "vote_average": self.pelicula.vote_average,
+            "trailer_key": self.pelicula.trailer_key,
+        }
 
-        "id": self.pelicula.tmdb_id,
-        "title": self.pelicula.titulo,
-        "overview": self.pelicula.overview,
-        "poster_path": self.pelicula.poster_path,
-        "backdrop_path": self.pelicula.backdrop_path,
-        "release_date": self.pelicula.release_date,
-        "vote_average": self.pelicula.vote_average,
-        "trailer_key": self.pelicula.trailer_key,
-    }
+
+#Arcade
+class ArcadeScore(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    initials: Mapped[str] = mapped_column(String(3), nullable=False)
+    score: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    user: Mapped["User"] = relationship("User", back_populates="arcade_scores")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "usuario_id": self.usuario_id,
+            "initials": self.initials,
+            "score": self.score,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
