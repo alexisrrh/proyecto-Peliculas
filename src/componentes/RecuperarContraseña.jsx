@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 
 function RecuperarContraseña() {
@@ -9,24 +8,37 @@ function RecuperarContraseña() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+ 
+const API_URL = import.meta.env.VITE_API_URL;
+
   async function handleSubmit(e) {
     e.preventDefault();
     setMensaje("");
     setError("");
     setLoading(true);
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/cambiar-clave`,
-    });
+    try {
+      const res = await fetch(`${API_URL}/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
-    setLoading(false);
+      const data = await res.json();
 
-    if (error) {
-      setError("No se pudo enviar el correo: " + error.message);
-      return;
+      if (!res.ok) {
+        setError(data.msg || "No se pudo enviar el correo");
+        return;
+      }
+
+      setMensaje(data.msg || "Te enviamos un enlace para cambiar tu contraseña.");
+    } catch (error) {
+      setError("No se pudo conectar con el servidor.");
+    } finally {
+      setLoading(false);
     }
-
-    setMensaje("Te enviamos un enlace para cambiar tu contraseña.");
   }
 
   return (
@@ -57,7 +69,7 @@ function RecuperarContraseña() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-white/50 border border-zinc-700 focus:border-cyan-400 text-cyan-50 font-bold tracking-wider p-3 outline-none"
+              className="w-full bg-white/10 border border-zinc-700 focus:border-cyan-400 text-cyan-50 font-bold tracking-wider p-3 outline-none"
               placeholder="INGRESA TU CORREO"
             />
           </div>
