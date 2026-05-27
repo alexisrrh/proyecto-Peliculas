@@ -137,17 +137,17 @@ class PasswordResetToken(db.Model):
     user: Mapped["User"] = relationship("User")
 
 
-    class Comentario(db.Model):
-        id: Mapped[int] = mapped_column(primary_key=True)
-        user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
-        tmdb_id: Mapped[int] = mapped_column(Integer, nullable=False)
-        texto: Mapped[str] = mapped_column(String(500), nullable=False)
-        created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+class Comentario(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    tmdb_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    texto: Mapped[str] = mapped_column(String(500), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-        user: Mapped["User"] = relationship("User")
+    user: Mapped["User"] = relationship("User")
 
-        def serialize(self):
-            return {
+    def serialize(self):
+        return {
             "id": self.id,
             "user_id": self.user_id,
             "tmdb_id": self.tmdb_id,
