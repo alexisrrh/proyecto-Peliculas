@@ -37,10 +37,10 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 admin = Admin(app, name="Peliculas DB")
-admin.add_view(ModelView(User, db))
-admin.add_view(ModelView(Pelicula, db))
-admin.add_view(ModelView(Favorito, db))
-admin.add_view(ModelView(ArcadeScore, db)) 
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Pelicula, db.session))
+admin.add_view(ModelView(Favorito, db.session))
+admin.add_view(ModelView(ArcadeScore, db.session)) 
 
 
 @app.route("/")
@@ -307,6 +307,8 @@ def save_score():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
     app.run(debug=True)
