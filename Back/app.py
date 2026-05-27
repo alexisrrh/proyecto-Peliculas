@@ -109,10 +109,20 @@ Este enlace caduca en 30 minutos.
 
 Si no solicitaste esto, ignora este correo.
 """
+    try:
+        mail.send(msg)
 
-    mail.send(msg)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "msg": "No se pudo enviar el correo",
+            "error": str(e)
+        }), 500
 
-    return jsonify({"msg": "Correo de recuperación enviado"}), 200
+    return jsonify({
+        "msg": "Correo de recuperación enviado"
+    }), 200
+
 
 @app.route('/user', methods=['GET'])
 def get_user():
