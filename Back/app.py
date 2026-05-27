@@ -16,7 +16,7 @@ from flask_admin.contrib.sqla import ModelView
 
 import requests
 import secrets
-from models import db, User, Pelicula, Favorito, ArcadeScore, PasswordResetToken
+from models import db, User, Pelicula, Favorito, ArcadeScore, PasswordResetToken, Comentario
 from datetime import datetime, timezone, timedelta
 load_dotenv()
 
@@ -57,6 +57,51 @@ admin.add_view(ModelView(ArcadeScore, db.session))
 def home():
     return jsonify({"msg": "API funcionando"}), 200
 
+@app.route("/movies/<int:tmdb_id>/comments", methods=["GET"])
+def get_movie_comments(tmdb_id):
+    comentarios = db.session.execute(
+        select(Comentario)
+        .where(Comentario.tmdb_id == tmdb_id)
+        .order_by(desc(Comentario.created_at))
+    ).scalars().all()
+
+    return jsonify({
+        "msg": "ok",
+        "comments": [comentario.serialize() for comentario in comentarios]
+    }), 200
+
+
+@app.route("/movies/<int:tmdb_id>/comments", methods=["POST"])
+@jwt_required()
+def create_movie_comment(tmdb_id):
+    email = get_jwt_identity()
+
+    user = db.session.execute(
+        select(User).where(User.email == email)
+    ).scalar_one_or_none()
+
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    body = request.get_json()
+    texto = body.get("texto")
+
+    if not texto or not texto.strip():
+        return jsonify({"msg": "El comentario no puede estar vacío"}), 400
+
+    nuevo_comentario = Comentario(
+        user_id=user.id,
+        tmdb_id=tmdb_id,
+        texto=texto.strip()
+    )
+
+    db.session.add(nuevo_comentario)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "Comentario creado",
+        "comment": nuevo_comentario.serialize()
+    }), 201
 
 @app.route("/youtube/comments/<video_id>", methods=["GET"])
 def get_youtube_comments(video_id):
