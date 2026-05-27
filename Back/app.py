@@ -15,8 +15,8 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_mail import Mail, Message
 import secrets
-from models import db, User, Pelicula, Favorito, ArcadeScore
-
+from models import db, User, Pelicula, Favorito, ArcadeScore, PasswordResetToken
+from datetime import datetime, timezone, timedelta
 load_dotenv()
 
 app = Flask(__name__)
@@ -38,7 +38,14 @@ app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 mail = Mail(app)
 db.init_app(app)
 MIGRATE = Migrate(app, db)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(
+    app,
+    resources={r"/*": {"origins": [
+        "http://localhost:5173",
+        "https://vhsflix.vercel.app"
+    ]}},
+    supports_credentials=True
+)
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
@@ -71,7 +78,17 @@ def forgot_password():
 
     token = secrets.token_urlsafe(32)
 
-    reset_link = f"http://localhost:5173/reset-password/{token}"
+    reset_token = PasswordResetToken(
+        token=token,
+        user_id=user.id,
+        expires_at=datetime.now(timezone.utc) + timedelta(minutes=30),
+        used=False
+    )
+
+    db.session.add(reset_token)
+    db.session.commit()
+
+    reset_link = f"https://vhsflix.vercel.app/reset-password/{token}"
 
     msg = Message(
         "Recuperar clave VHSFLIX",
@@ -85,6 +102,8 @@ Hola {user.nombre},
 Haz clic en este enlace para recuperar tu clave:
 
 {reset_link}
+
+Este enlace caduca en 30 minutos.
 
 Si no solicitaste esto, ignora este correo.
 """
@@ -156,6 +175,56 @@ def create_pelicula():
     db.session.commit()
 
     return jsonify({"msg": "Película creada", "pelicula": nueva_pelicula.serialize()}), 201
+
+@app.route("/reset-password", methods=["POST"])
+def reset_password():
+    body = request.get_json()
+
+    token = body.get("token")
+    password = body.get("password")
+
+    if not token or not password:
+        return jsonify({"msg": "Token y contraseña requeridos"}), 400
+
+    if len(password) < 6:
+        return jsonify({"msg": "La contraseña debe tener mínimo 6 caracteres"}), 400
+
+    reset_token = db.session.execute(
+        select(PasswordResetToken).where(
+            PasswordResetToken.token == token
+        )
+    ).scalar_one_or_none()
+
+    if not reset_token:
+        return jsonify({"msg": "Token inválido"}), 400
+
+    if reset_token.used:
+        return jsonify({"msg": "Este enlace ya fue usado"}), 400
+
+    now = datetime.now(timezone.utc)
+
+    expires_at = reset_token.expires_at
+
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+    if expires_at < now:
+        return jsonify({"msg": "El enlace ha caducado"}), 400
+
+    user = db.session.get(User, reset_token.user_id)
+
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+
+    user.password = hashed_password
+
+    reset_token.used = True
+
+    db.session.commit()
+
+    return jsonify({"msg": "Contraseña actualizada correctamente"}), 200
 
 @app.route('/users/<int:user_id>/favoritos', methods=['POST'])
 def create_user_favorito(user_id):

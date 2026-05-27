@@ -9,7 +9,7 @@ import Relax from "../pages/Relax";
 import LogIn from "../componentes/LogIn"; 
 import Registro from "../componentes/Registro";
 import RecuperarContraseña from "../componentes/RecuperarContraseña";
-
+import ResetPassword from "../componentes/ResetPassword";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -29,6 +29,8 @@ export const AppRoutes = () => {
       <Route path="/registro"  element={<Registro/>}/>
       <Route path="/recuperarContraseña"  element={<RecuperarContraseña/>}/>
       <Route path="*" element={<Navigate to="/" />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
     </Routes>
+
   );
 };
