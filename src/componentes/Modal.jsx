@@ -8,7 +8,9 @@ function Modal() {
     const { state } = useAppContext();
     const [video, setVideo] = useState(null);
     const [loading, setLoading] = useState(true);
-
+const [comentarios, setComentarios] = useState([]);
+const [loadingComentarios, setLoadingComentarios] = useState(false);
+const API_URL = import.meta.env.VITE_API_URL;
     const todasLasPeliculas = useMemo(() => [
         ...(state.Populares || []),
         ...(state.Accion || []),
@@ -45,6 +47,28 @@ function Modal() {
         }
         fetchVideos();
     }, [id]);
+    useEffect(() => {
+    if (!video?.key) return;
+
+    async function fetchComentarios() {
+        setLoadingComentarios(true);
+
+        try {
+            const response = await fetch(`${API_URL}/youtube/comments/${video.key}`);
+            const data = await response.json();
+
+            if (data.comments) {
+                setComentarios(data.comments);
+            }
+        } catch (error) {
+            console.error("Error al traer comentarios:", error);
+        } finally {
+            setLoadingComentarios(false);
+        }
+    }
+
+    fetchComentarios();
+}, [video?.key]);
 
     if (!pelicula) {
         return (
@@ -119,6 +143,45 @@ function Modal() {
                         {pelicula.overview}
                     </p>
                 </div>
+                <div className="mt-6 border-t border-white/10 pt-5">
+    <h3 className="text-white font-bold text-lg mb-4">
+        Comentarios del trailer
+    </h3>
+
+    {loadingComentarios ? (
+        <p className="text-zinc-400 text-sm">Cargando comentarios...</p>
+    ) : comentarios.length > 0 ? (
+        <div className="space-y-4 max-h-56 overflow-y-auto pr-2">
+            {comentarios.map((comentario, index) => (
+                <div key={index} className="flex gap-3 bg-black/30 p-3 rounded-xl border border-white/10">
+                    <img
+                        src={comentario.avatar}
+                        alt={comentario.author}
+                        className="w-9 h-9 rounded-full"
+                    />
+
+                    <div>
+                        <p className="text-white text-sm font-bold">
+                            {comentario.author}
+                        </p>
+
+                        <p className="text-zinc-300 text-sm">
+                            {comentario.text}
+                        </p>
+
+                        <p className="text-zinc-500 text-xs mt-1">
+                            👍 {comentario.likes}
+                        </p>
+                    </div>
+                </div>
+            ))}
+        </div>
+    ) : (
+        <p className="text-zinc-500 text-sm">
+            No hay comentarios disponibles.
+        </p>
+    )}
+</div>
             </div>
         </div>
     );

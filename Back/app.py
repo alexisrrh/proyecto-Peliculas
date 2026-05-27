@@ -58,6 +58,53 @@ def home():
     return jsonify({"msg": "API funcionando"}), 200
 
 
+@app.route("/youtube/comments/<video_id>", methods=["GET"])
+def get_youtube_comments(video_id):
+    api_key = os.getenv("YOUTUBE_API_KEY")
+
+    if not api_key:
+        return jsonify({"msg": "Falta YOUTUBE_API_KEY"}), 500
+
+    url = "https://www.googleapis.com/youtube/v3/commentThreads"
+
+    params = {
+        "part": "snippet",
+        "videoId": video_id,
+        "maxResults": 10,
+        "order": "relevance",
+        "textFormat": "plainText",
+        "key": api_key
+    }
+
+    response = requests.get(url, params=params)
+
+    data = response.json()
+
+    if response.status_code != 200:
+        return jsonify({
+            "msg": "No se pudieron cargar los comentarios",
+            "error": data
+        }), response.status_code
+
+    comments = []
+
+    for item in data.get("items", []):
+        comment = item["snippet"]["topLevelComment"]["snippet"]
+
+        comments.append({
+            "author": comment.get("authorDisplayName"),
+            "avatar": comment.get("authorProfileImageUrl"),
+            "text": comment.get("textDisplay"),
+            "likes": comment.get("likeCount"),
+            "publishedAt": comment.get("publishedAt")
+        })
+
+    return jsonify({
+        "msg": "ok",
+        "comments": comments
+    }), 200
+
+
 @app.route("/forgot-password", methods=["POST"])
 def forgot_password():
     body = request.get_json()
