@@ -47,30 +47,63 @@ const opcionesAvatares = [
     }, []);
 
         // FUNCIÓN PARA GUARDAR EL AVATAR EN EL BACKEND
-    const actualizarAvatar = async (nuevaUrl) => {
-        const token = localStorage.getItem("token");
-        try {
-            // Asumimos que tienes un endpoint /update-avatar o similar en tu backend
-            const response = await fetch(`${API_URL}/update-avatar`, {
+ const actualizarAvatar = async (nuevaUrl) => {
+
+    const token = localStorage.getItem("token");
+
+    console.log(nuevaUrl);
+
+    try {
+
+        const response = await fetch(
+            `https://proyecto-peliculas-1-iiml.onrender.com/update-avatar`,
+            {
                 method: 'PUT',
-                headers: { 
+                headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ avatar: nuevaUrl })
-            });
-
-            if (response.ok) {
-                setAvatarActual(nuevaUrl);
-                setEditando(false);
-                console.log("Avatar actualizado en la base de datos");
-            } else {
-                console.error("No se pudo guardar el avatar en el servidor");
+                body: JSON.stringify({
+                    avatar: nuevaUrl
+                })
             }
-        } catch (error) {
-            console.error("Error al guardar avatar:", error);
-        }
+        );
+
+        console.log(response);
+
+if (response.ok) {
+    const data = await response.json();
+
+    const usuarioActualizado = {
+        ...usuario,
+        avatar: data.avatar
     };
+
+    setAvatarActual(data.avatar);
+    setUsuario(usuarioActualizado);
+
+    localStorage.setItem(
+        "user",
+        JSON.stringify(usuarioActualizado)
+    );
+
+    setEditando(false);
+
+    console.log("Avatar actualizado:", data.avatar);
+}
+
+    else {
+
+            console.error("No se pudo guardar el avatar en el servidor");
+
+        }
+
+    } catch (error) {
+
+        console.error("Error al guardar avatar:", error);
+
+    }
+};
 
     if (loading) return (
         <div className="flex items-center justify-center font-mono p-20">
@@ -153,7 +186,7 @@ const opcionesAvatares = [
                                     {opcionesAvatares.map((img, i) => (
                                         <button 
                                             key={i} 
-                                            onClick={() => { setAvatarActual(img); setEditando(false); }}
+                                            onClick={() => {actualizarAvatar(img)}}
                                             className={`border-2 transition-all ${avatarActual === img ? 'border-pink-500 scale-110 shadow-[0_0_10px_rgba(236,72,153,0.8)]' : 'border-zinc-700'}`}
                                         >
                                             <img src={img} className="w-full aspect-square object-cover grayscale" />

@@ -1,9 +1,17 @@
 import React, { useRef } from "react";
 import { useAppContext } from "../context/AppContext";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { agregarFavorito } from "../services/auth.services";
 
+
 const PeliculasAccion = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const handlePeliculaClick = (item) => {
+    token ? navigate(`/modal/${item.id}`) : navigate("/login");
+  };
+  
   const { state, dispatch } = useAppContext();
   const scrollRef = useRef(null);
 
@@ -59,13 +67,14 @@ const PeliculasAccion = () => {
             className="max-w-[300px] group relative shrink-0 shadow-lg transform transition-all duration-300 hover:z-20 hover:-translate-y-4 hover:scale-105 hover:shadow-2xl hover:ring-red-500/50"
           >
             <div className="h-100 rounded-2xl">
-              <Link to={`/modal/${item.id}`}>
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                  alt={item.title}
-                  className="h-full rounded-2xl w-full hover:rotate-2 object-cover transition duration-500 hover:grayscale-100"
-                />
-              </Link>
+         
+               <img
+  onClick={() => handlePeliculaClick(item)}
+  src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+  alt={item.title}
+  className="h-full rounded-2xl w-full hover:rotate-2 object-cover transition duration-500 hover:grayscale-100 cursor-pointer"
+/>
+         
 
               <div className="flex top-0 items-start justify-between gap-3 p-2 group-hover:opacity-100 md:opacity-0 transition-all duration-500 absolute">
                 <h3 className="text-2xl font-semibold text-white">

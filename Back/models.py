@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
-# USER
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     nombre: Mapped[str] = mapped_column(String(120), nullable=False)
@@ -15,14 +14,19 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(nullable=False)
     avatar: Mapped[str] = mapped_column(String(500), nullable=True, default="")
 
-    favoritos: Mapped[List["Favorito"]] = relationship("Favorito", back_populates="user")
-    arcade_scores: Mapped[List["ArcadeScore"]] = relationship("ArcadeScore", back_populates="user")
+    favoritos: Mapped[List["Favorito"]] = relationship(
+        "Favorito",
+        back_populates="user"
+    )
+
 
     def serialize(self):
         default_avatar = "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg"
-        img_final = self.avatar
-        if not img_final or img_final == "" or "https://i.pinimg.com/736x/c5/77/35/c577359e3223df4b3d92e785bf7464a8.jpg" in img_final:
+
+        if not self.avatar or self.avatar == "":
             img_final = default_avatar
+        else:
+            img_final = self.avatar
 
         return {
             "id": self.id,

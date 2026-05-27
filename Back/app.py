@@ -42,16 +42,6 @@ admin.add_view(ModelView(Pelicula, db))
 admin.add_view(ModelView(Favorito, db))
 admin.add_view(ModelView(ArcadeScore, db)) 
 
-from sqlalchemy import text
-with app.app_context():
-    try:
-        db.session.execute(text('SELECT avatar FROM "user" LIMIT 1'))
-    except Exception:
-        print("Añadiendo columna 'avatar' a la tabla 'user'...")
-        db.session.rollback()
-        db.session.execute(text('ALTER TABLE "user" ADD COLUMN avatar VARCHAR(500) DEFAULT \'\''))
-        db.session.commit()
-        print("¡Columna añadida con éxito!")
 
 @app.route("/")
 def home():
