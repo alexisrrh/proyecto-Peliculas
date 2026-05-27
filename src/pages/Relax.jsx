@@ -7,23 +7,42 @@ const Relax = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [leaderboard, setLeaderboard] = useState([]);
 
+  const API_URL = "https://proyecto-peliculas-1-iiml.onrender.com";
+  const isLoggedIn = !!localStorage.getItem("token");
+
   const fetchLeaderboard = async () => {
     try {
-      const savedScores = localStorage.getItem('vhsflix_arcade_scores');
-      if (savedScores) setLeaderboard(JSON.parse(savedScores));
+      const response = await fetch(`${API_URL}/scores`);
+      if (response.ok) {
+        const data = await response.json();
+        setLeaderboard(data);
+      }
     } catch (error) {
       console.error("Error al cargar la base de datos:", error);
     }
   };
 
   const saveToDatabase = async (newScore) => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
     try {
-      const updatedLeaderboard = [...leaderboard, newScore]
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
-        
-      setLeaderboard(updatedLeaderboard);
-      localStorage.setItem('vhsflix_arcade_scores', JSON.stringify(updatedLeaderboard));
+      const response = await fetch(`${API_URL}/scores`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          usuario_id: user.id,
+          initials: newScore.initials,
+          score: newScore.score
+        })
+      });
+
+      if (response.ok) {
+        fetchLeaderboard();
+      }
     } catch (error) {
       console.error("Error al guardar en la base de datos:", error);
     }
@@ -39,11 +58,10 @@ const Relax = () => {
         setIsGameOver(true);
       } 
       else if (event.data.type === 'SAVE_SCORE') {
-        const newScore = {
-          initials: event.data.initials.toUpperCase(),
-          score: event.data.score
-        };
-        saveToDatabase(newScore);
+        saveToDatabase(event.data);
+      }
+      else if (event.data.type === 'REDIRECT_LOGIN') {
+        navigate('/login');
       }
       else if (event.data.type === 'RESTART') {
         setIsGameOver(false);
@@ -53,7 +71,7 @@ const Relax = () => {
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [leaderboard]);
+  }, []);
 
   const gameHTML = `
     <!DOCTYPE html>
@@ -64,20 +82,10 @@ const Relax = () => {
       <title>Relax Mode Game - Combo System</title>
       <style>
         *, *:before, *:after { margin: 0; padding: 0; border: 0; box-sizing: border-box; }
-        html, body { 
-          display: block; width: 100vw; height: 100vh; cursor: crosshair; 
-          user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
-        }
-        body {
-          overflow: hidden; position: relative; 
-          background-color: #000000; 
-          font-family: 'Courier New', Courier, monospace;
-        }
+        html, body { display: block; width: 100vw; height: 100vh; cursor: crosshair; user-select: none; }
+        body { overflow: hidden; position: relative; background-color: #000000; font-family: 'Courier New', Courier, monospace; }
         #stageElement { display: block; position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: -1; }
-        #uiLayer {
-          position: fixed; top: 20px; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: flex-start;
-          padding: 0 5%; z-index: 100; pointer-events: none;
-        }
+        #uiLayer { position: fixed; top: 20px; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: flex-start; padding: 0 5%; z-index: 100; pointer-events: none; }
         .right-ui { display: flex; flex-direction: column; align-items: flex-end; }
         .arcade-text { font-size: clamp(20px, 4vw, 36px); font-weight: bold; color: #0ff; text-shadow: 0 0 10px #0ff, 0 0 20px #d946ef; transition: transform 0.1s; }
         #timerBoard { color: #f0f; text-shadow: 0 0 10px #f0f, 0 0 20px #0ff; }
@@ -94,30 +102,15 @@ const Relax = () => {
           100% { color: #f0f; text-shadow: 0 0 20px #f0f, 0 0 40px #f0f; transform: scale(1.2) rotate(-2deg); }
         }
         .combo-break { animation: shakeBreak 0.4s; color: #ff0000 !important; text-shadow: 0 0 15px #ff0000 !important; }
-        @keyframes shakeBreak {
-          0% { transform: translateX(0) scale(1.2); }
-          25% { transform: translateX(-15px) scale(1.2); }
-          50% { transform: translateX(15px) scale(1.2); }
-          75% { transform: translateX(-15px) scale(1.2); }
-          100% { transform: translateX(0) scale(1); }
-        }
-        #gameOverScreen {
-          display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
-          flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px);
-        }
+        @keyframes shakeBreak { 0%, 50%, 100% { transform: translateX(0) scale(1.2); } 25%, 75% { transform: translateX(-15px) scale(1.2); } }
+        #gameOverScreen { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         @media (min-width: 1024px) { #gameOverScreen { padding-right: 400px; } }
         .go-title { font-size: clamp(40px, 8vw, 70px); color: #f0f; text-shadow: 0 0 20px #f0f; margin-bottom: 20px; animation: blink 1s infinite; font-weight: 900;}
         .go-score { font-size: clamp(25px, 5vw, 40px); color: #0ff; margin-bottom: 10px; font-weight: bold; text-align: center;}
         .go-stats { font-size: clamp(18px, 3vw, 24px); color: #fff; margin-bottom: 40px; font-weight: bold; text-align: center; line-height: 1.5;}
         .input-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;}
-        #initials {
-          background: transparent; border: 3px solid #0ff; color: #fff; font-size: clamp(30px, 5vw, 40px); font-family: 'Courier New', monospace;
-          width: 120px; text-align: center; text-transform: uppercase; outline: none; letter-spacing: 10px; box-shadow: 0 0 15px #0ff; font-weight: bold;
-        }
-        .arcade-btn {
-          background: #f0f; color: #fff; border: 3px solid #fff; font-size: clamp(20px, 4vw, 30px); font-family: 'Courier New', monospace; font-weight: bold;
-          padding: 5px 20px; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 15px #f0f; transition: 0.2s;
-        }
+        #initials { background: transparent; border: 3px solid #0ff; color: #fff; font-size: clamp(30px, 5vw, 40px); font-family: 'Courier New', monospace; width: 120px; text-align: center; text-transform: uppercase; outline: none; letter-spacing: 10px; box-shadow: 0 0 15px #0ff; font-weight: bold; }
+        .arcade-btn { background: #f0f; color: #fff; border: 3px solid #fff; font-size: clamp(20px, 4vw, 30px); font-family: 'Courier New', monospace; font-weight: bold; padding: 5px 20px; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 15px #f0f; transition: 0.2s; }
         .arcade-btn:hover { background: #0ff; box-shadow: 0 0 20px #0ff; transform: scale(1.05); }
         .restart-btn { background: #0ff; box-shadow: 0 0 15px #0ff; margin-top: 30px; display: none; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
@@ -150,6 +143,7 @@ const Relax = () => {
       <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
       
       <script>
+        const isLoggedIn = ${isLoggedIn};
         let gameActive = true;
         let timeLeft = 50;
         let currentScore = 0;
@@ -164,7 +158,6 @@ const Relax = () => {
           currentScore += points;
           if(currentScore < 0) currentScore = 0;
           document.getElementById('scoreBoard').innerText = 'SCORE: ' + currentScore;
-          
           const scBoard = document.getElementById('scoreBoard');
           scBoard.style.transform = 'scale(1.2)';
           setTimeout(() => { if(scBoard) scBoard.style.transform = 'scale(1)'; }, 100);
@@ -172,25 +165,14 @@ const Relax = () => {
 
         const updateComboUI = () => {
           const comboEl = document.getElementById('comboBoard');
-          if (comboMultiplier < 2) {
-            comboEl.style.display = 'none';
-            return;
-          }
-          
+          if (comboMultiplier < 2) { comboEl.style.display = 'none'; return; }
           comboEl.style.display = 'block';
           comboEl.innerText = 'COMBO x' + comboMultiplier;
           comboEl.className = 'arcade-text'; 
-          
-          if (comboMultiplier >= 15) {
-            comboEl.classList.add('combo-max'); 
-          } else if (comboMultiplier >= 10) {
-            comboEl.classList.add('combo-tier-3'); 
-          } else if (comboMultiplier >= 5) {
-            comboEl.classList.add('combo-tier-2'); 
-          } else if (comboMultiplier >= 2) {
-            comboEl.classList.add('combo-tier-1'); 
-          }
-
+          if (comboMultiplier >= 15) comboEl.classList.add('combo-max'); 
+          else if (comboMultiplier >= 10) comboEl.classList.add('combo-tier-3'); 
+          else if (comboMultiplier >= 5) comboEl.classList.add('combo-tier-2'); 
+          else if (comboMultiplier >= 2) comboEl.classList.add('combo-tier-1'); 
           if(comboMultiplier < 15) {
             comboEl.style.transform = 'scale(1.3)';
             clearTimeout(comboTimeout);
@@ -204,16 +186,10 @@ const Relax = () => {
             comboEl.innerText = 'COMBO BROKEN!';
             comboEl.className = 'arcade-text combo-break';
             comboEl.style.display = 'block';
-            
-            consecutiveHits = 0;
-            comboMultiplier = 1;
-            
-            setTimeout(() => {
-                updateComboUI(); 
-            }, 600);
+            consecutiveHits = 0; comboMultiplier = 1;
+            setTimeout(() => updateComboUI(), 600);
           } else {
-            consecutiveHits = 0;
-            comboMultiplier = 1;
+            consecutiveHits = 0; comboMultiplier = 1;
           }
         };
 
@@ -236,11 +212,12 @@ const Relax = () => {
         }
 
         window.submitScore = function() {
-          let initials = document.getElementById('initials').value;
-          if(initials.length !== 3) {
-            alert('¡Ingresa 3 letras!');
+          if(!isLoggedIn) {
+            window.parent.postMessage({ type: 'REDIRECT_LOGIN' }, '*');
             return;
           }
+          let initials = document.getElementById('initials').value;
+          if(initials.length !== 3) { alert('¡Ingresa 3 letras!'); return; }
           window.parent.postMessage({ type: 'SAVE_SCORE', initials: initials, score: currentScore }, '*');
           document.getElementById('inputSection').style.display = 'none';
           document.getElementById('savedMsg').style.display = 'block';
@@ -259,41 +236,23 @@ const Relax = () => {
         const matBlack = new THREE.MeshBasicMaterial({ color: 0x444444, wireframe: true }); 
 
         const asteroidsManager = {
-          scene: null, asteroids: [], 
-          baseSpeed: 18, 
-          spawnRate: 0.12, 
-          geometry: new THREE.DodecahedronGeometry(25, 0),
-          geoTime: new THREE.OctahedronGeometry(22, 0), 
-          geoDanger: new THREE.IcosahedronGeometry(28, 0),
-          
+          scene: null, asteroids: [], baseSpeed: 18, spawnRate: 0.12, 
+          geometry: new THREE.DodecahedronGeometry(25, 0), geoTime: new THREE.OctahedronGeometry(22, 0), geoDanger: new THREE.IcosahedronGeometry(28, 0),
           create(scene) { this.scene = scene; },
           spawn() {
             let roll = Math.random();
             let mat, pts, type, spdMult, geo = this.geometry;
-
-            if (roll < 0.02) { 
-              mat = matTime; pts = 0; type = 'time'; spdMult = 1.3; geo = this.geoTime;
-            } else if (roll < 0.06) { 
-              mat = matBlack; pts = 0; type = 'death'; spdMult = 0.7; geo = this.geoDanger;
-            } else if (roll < 0.18) { 
-              mat = matRed; pts = -30; type = 'penalty'; spdMult = 1.0;
-            } else if (roll < 0.45) { 
-              mat = mat10; pts = 10; type = 'normal'; spdMult = 1.0;
-            } else if (roll < 0.75) { 
-              mat = mat20; pts = 20; type = 'cyan'; spdMult = 1.3;
-            } else { 
-              mat = mat30; pts = 30; type = 'gold'; spdMult = 1.5;
-            } 
+            if (roll < 0.02) { mat = matTime; pts = 0; type = 'time'; spdMult = 1.3; geo = this.geoTime; } 
+            else if (roll < 0.06) { mat = matBlack; pts = 0; type = 'death'; spdMult = 0.7; geo = this.geoDanger; } 
+            else if (roll < 0.18) { mat = matRed; pts = -30; type = 'penalty'; spdMult = 1.0; } 
+            else if (roll < 0.45) { mat = mat10; pts = 10; type = 'normal'; spdMult = 1.0; } 
+            else if (roll < 0.75) { mat = mat20; pts = 20; type = 'cyan'; spdMult = 1.3; } 
+            else { mat = mat30; pts = 30; type = 'gold'; spdMult = 1.5; } 
 
             let mesh = new THREE.Mesh(geo, mat);
             mesh.position.set( THREE.Math.randFloat(-2000, 2000), THREE.Math.randFloat(-800, 800), -4000 );
             mesh.rotation.set( Math.random(), Math.random(), Math.random() );
-            
-            mesh.userData = { 
-              rotX: THREE.Math.randFloat(-0.05, 0.05), rotY: THREE.Math.randFloat(-0.05, 0.05), rotZ: THREE.Math.randFloat(-0.05, 0.05), 
-              points: pts, type: type, speed: this.baseSpeed * spdMult, color: mat.color
-            };
-            
+            mesh.userData = { rotX: THREE.Math.randFloat(-0.05, 0.05), rotY: THREE.Math.randFloat(-0.05, 0.05), rotZ: THREE.Math.randFloat(-0.05, 0.05), points: pts, type: type, speed: this.baseSpeed * spdMult, color: mat.color };
             this.asteroids.push(mesh); this.scene.add(mesh);
           },
           update() {
@@ -330,9 +289,7 @@ const Relax = () => {
 
         const groundPlain = {
           group: null, geometry: null, simplex: null, factor: 300, scale: 30, speed: 0.015, cycle: 0, ease: 12, 
-          move: { x: 0, y: -300, z: -1000 }, look: { x: 29.8, y: 0, z: 0 }, 
-          targetHue: 0.6, currentHue: 0.6, material: null,
-          
+          move: { x: 0, y: -300, z: -1000 }, look: { x: 29.8, y: 0, z: 0 }, targetHue: 0.6, currentHue: 0.6, material: null,
           create( scene ) {
             this.group = new THREE.Object3D(); this.group.position.set( this.move.x, this.move.y, this.move.z ); this.group.rotation.set( this.look.x, this.look.y, this.look.z );
             this.geometry = new THREE.PlaneGeometry( 4000, 2000, 128, 64 ); 
@@ -358,10 +315,7 @@ const Relax = () => {
         const gunShip = {
           scene: null, group: null, shots: [], toggleCannon: false, ease: 8, 
           move: { x: 0, y: 0, z: -40 }, look: { x: 0, y: 0, z: 0 }, aimDirection: new THREE.Vector3(0, 0, -1),
-          create( scene ) {
-            this.scene = scene; this.group = new THREE.Object3D(); this.group.position.set( this.move.x, this.move.y, this.move.z );
-            this.setupShip(); scene.add( this.group ); 
-          },
+          create( scene ) { this.scene = scene; this.group = new THREE.Object3D(); this.group.position.set( this.move.x, this.move.y, this.move.z ); this.setupShip(); scene.add( this.group ); },
           setupShip() {
             let material = new THREE.MeshBasicMaterial({ color: 0x0099ff, transparent: true, opacity: 0.8 });
             let cylinder = new THREE.Mesh( new THREE.CylinderGeometry( 0, .4, 8, 32 ), material );
@@ -374,40 +328,25 @@ const Relax = () => {
           onClick( e ) {
             if(!gameActive) return;
             totalShots++; 
-            
             let colorHex = 0x00ffff;
-            if (comboMultiplier >= 15) { colorHex = new THREE.Color().setHSL(Math.random(), 1, 0.5); } 
-            else if (comboMultiplier >= 10) { colorHex = 0xff00ff; } 
-            else if (comboMultiplier >= 5) { colorHex = 0xffaa00; } 
-            else if (comboMultiplier >= 2) { colorHex = 0x39ff14; } 
-            
+            if (comboMultiplier >= 15) colorHex = new THREE.Color().setHSL(Math.random(), 1, 0.5); 
+            else if (comboMultiplier >= 10) colorHex = 0xff00ff; 
+            else if (comboMultiplier >= 5) colorHex = 0xffaa00; 
+            else if (comboMultiplier >= 2) colorHex = 0x39ff14; 
             let color = new THREE.Color(colorHex); 
-            this.toggleCannon = !this.toggleCannon; 
-            let offsetX = this.toggleCannon ? 3 : -3; 
-            
-            let laser = new THREE.Mesh( 
-              new THREE.CylinderGeometry( 2, 2, 120, 8 ), 
-              new THREE.MeshBasicMaterial({ color, blending: THREE.AdditiveBlending, transparent: true }) 
-            );
-            
+            this.toggleCannon = !this.toggleCannon; let offsetX = this.toggleCannon ? 3 : -3; 
+            let laser = new THREE.Mesh( new THREE.CylinderGeometry( 2, 2, 120, 8 ), new THREE.MeshBasicMaterial({ color, blending: THREE.AdditiveBlending, transparent: true }) );
             let spawnPos = new THREE.Vector3(this.group.position.x + offsetX, this.group.position.y, this.group.position.z + 307);
             laser.position.copy(spawnPos);
             let dir = this.aimDirection.clone();
             laser.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-            
-            let speed = 250; 
-            laser.userData = { vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed };
+            let speed = 250; laser.userData = { vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed };
             this.shots.push( laser ); this.scene.add( laser ); 
           }, 
           updateShots() {
             for ( let i = this.shots.length - 1; i >= 0; i-- ) {
               let s = this.shots[ i ]; 
-              
-              if ( s.position.z < -4000 ) { 
-                breakCombo();
-                this.shots.splice( i, 1 ); this.scene.remove( s ); continue; 
-              }
-              
+              if ( s.position.z < -4000 ) { breakCombo(); this.shots.splice( i, 1 ); this.scene.remove( s ); continue; }
               s.position.x += s.userData.vx; s.position.y += s.userData.vy; s.position.z += s.userData.vz;
             }
           }, 
@@ -419,8 +358,7 @@ const Relax = () => {
             let targetPos = camera.position.clone().add(vec.multiplyScalar(distance));
             this.move.x = targetPos.x; this.move.y = targetPos.y;
             this.look.x = ndcY * 0.15; this.look.y = -ndcX * 0.15; this.look.z = -ndcX * 0.25;
-            this.updateShots();
-            addEase( this.group.position, this.move, this.ease ); addEase( this.group.rotation, this.look, this.ease );
+            this.updateShots(); addEase( this.group.position, this.move, this.ease ); addEase( this.group.rotation, this.look, this.ease );
           }
         };
 
@@ -433,39 +371,24 @@ const Relax = () => {
 
             for (let j = asteroidsManager.asteroids.length - 1; j >= 0; j--) {
               let ast = asteroidsManager.asteroids[j];
-              
               if (shot.position.distanceTo(ast.position) < 75) {
                 explosions.spawn(ast.position, ast.userData.color); 
-                
-                const type = ast.userData.type;
-                const points = ast.userData.points;
-
+                const type = ast.userData.type; const points = ast.userData.points;
                 asteroidsManager.scene.remove(ast); asteroidsManager.asteroids.splice(j, 1);
                 
-                if(type === 'death') {
-                  breakCombo();
-                  endGame("GAME OVER");
-                } else if (type === 'penalty') {
-                  breakCombo();
-                  updateScore(points);
-                } else if(type === 'time') {
-                  timeLeft += 10; 
-                } else {
+                if(type === 'death') { breakCombo(); endGame("GAME OVER"); } 
+                else if (type === 'penalty') { breakCombo(); updateScore(points); } 
+                else if(type === 'time') { timeLeft += 10; } 
+                else {
                   consecutiveHits++;
                   comboMultiplier = consecutiveHits >= 2 ? Math.min(consecutiveHits, 15) : 1;
                   if (comboMultiplier > maxComboReached) maxComboReached = comboMultiplier;
-                  updateScore(points * comboMultiplier);
-                  updateComboUI();
+                  updateScore(points * comboMultiplier); updateComboUI();
                 }
-                
-                hitFound = true;
-                break; 
+                hitFound = true; break; 
               }
             }
-
-            if (hitFound) {
-                gunShip.scene.remove(shot); gunShip.shots.splice(i, 1);
-            }
+            if (hitFound) { gunShip.scene.remove(shot); gunShip.shots.splice(i, 1); }
           }
         };
 
@@ -479,7 +402,6 @@ const Relax = () => {
           camera.position.set( 0, 0, 300 );
           
           groundPlain.create( scene ); gunShip.create( scene ); asteroidsManager.create( scene ); explosions.create( scene );
-          
           setInterval(() => { if (gameActive) groundPlain.targetHue = Math.random(); }, 15000);
           
           window.addEventListener( 'resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize( window.innerWidth, window.innerHeight ); });
@@ -489,15 +411,8 @@ const Relax = () => {
           
           const loop = () => {
             requestAnimationFrame( loop ); 
-            if (gameActive) {
-              groundPlain.update( mouse ); 
-              gunShip.update( mouse, camera ); 
-              asteroidsManager.update(); explosions.update();
-              checkCollisions();
-            } else {
-              groundPlain.update( mouse );
-              explosions.update(); gunShip.updateShots();
-            }
+            if (gameActive) { groundPlain.update( mouse ); gunShip.update( mouse, camera ); asteroidsManager.update(); explosions.update(); checkCollisions(); } 
+            else { groundPlain.update( mouse ); explosions.update(); gunShip.updateShots(); }
             renderer.render( scene, camera );
           };
           loop();
@@ -512,9 +427,7 @@ const Relax = () => {
     <div className="relative w-full h-screen bg-black select-none font-mono overflow-hidden">
       
       <button 
-        onClick={() => {
-          navigate('/'); 
-        }}
+        onClick={() => navigate('/')}
         className="absolute bottom-6 left-6 z-50 bg-black/80 border-2 border-fuchsia-500 text-fuchsia-500 hover:bg-fuchsia-500 hover:text-white px-4 py-2 uppercase font-bold transition-all shadow-[0_0_15px_rgba(217,70,239,0.8)] cursor-pointer backdrop-blur-md rounded-md"
       >
         VOLVER
