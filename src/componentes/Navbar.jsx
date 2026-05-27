@@ -23,21 +23,18 @@ const Navbar = () => {
   const busqueda = (e) => {
     const texto = e.target.value;
     setBusqueda(texto);
-    
-    if (texto.trim() === "") {
-      navigate("/"); 
-    } else {
-      navigate(`/search/${texto}`);
-    }
+    if (texto.trim() === "") { navigate("/"); } 
+    else { navigate(`/search/${texto}`); }
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
     <Disclosure as="nav" className="sticky top-0 z-50 bg-black/70 backdrop-blur-md">
-      <div className="mx-auto px-2 md:px-6 lg:px-8">
+      <div className="mx-auto px-4 md:px-6 lg:px-8">
         <div className="relative flex h-20 items-center justify-between">
 
+          {/* 1. BOTÓN MÓVIL (A la izquierda) */}
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white">
               <Bars3Icon className="block size-6 group-data-open:hidden" />
@@ -45,28 +42,28 @@ const Navbar = () => {
             </DisclosureButton>
           </div>
 
+          {/* 2. CONTENEDOR LOGO (Centrado en móvil, izquierda en desktop) */}
           <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             <div className="flex shrink-0 items-center">
-              <img alt="Ipanema Logo" src={logo} className="h-16 w-auto" />
+              <img 
+                alt="Ipanema Logo" 
+                src={logo} 
+                className="h-12 lg:h-16 w-auto" 
+              />
             </div>
 
-            <div className="hidden md:ml-10 md:flex items-center space-x-8">
+            {/* Menú Desktop (Se mantiene igual para que las categorías funcionen) */}
+            <div className="hidden md:ml-6 lg:ml-10 md:flex items-center md:space-x-4 lg:space-x-8">
               {navigation.map((item) => {
                 if (item.name === 'Categorías') {
                   return (
                     <div 
                       key={item.name} 
-                      className="relative h-full flex items-center"
+                      className="relative h-20 flex items-center"
                       onMouseEnter={() => setShowCategories(true)}
                       onMouseLeave={() => setShowCategories(false)}
                     >
-                      <button
-                        className={`text-lg font-medium transition-colors ${
-                          showCategories || categories.some(c => isActive(`/${c.toLowerCase()}`)) 
-                          ? 'text-yellow-400' 
-                          : 'text-white hover:text-gray-300'
-                        }`}
-                      >
+                      <button className={`text-lg font-medium transition-colors ${showCategories || categories.some(c => isActive(`/${c.toLowerCase()}`)) ? 'text-yellow-400' : 'text-white'}`}>
                         {item.name}
                       </button>
 
@@ -75,14 +72,7 @@ const Navbar = () => {
                           <div className="bg-black/95 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-2xl">
                             <div className="flex justify-center space-x-6">
                               {categories.map((cat) => (
-                                <Link
-                                  key={cat}
-                                  to={`/${cat.toLowerCase()}`}
-                                  onClick={() => setShowCategories(false)}
-                                  className={`text-sm font-medium whitespace-nowrap transition-colors ${
-                                    isActive(`/${cat.toLowerCase()}`)? 'text-yellow-400' : 'text-gray-400 hover:text-white'
-                                  }`}
-                                >
+                                <Link key={cat} to={`/${cat.toLowerCase()}`} onClick={() => setShowCategories(false)} className={`text-sm font-medium whitespace-nowrap transition-colors ${isActive(`/${cat.toLowerCase()}`)? 'text-yellow-400' : 'text-gray-400 hover:text-white'}`}>
                                   {cat}
                                 </Link>
                               ))}
@@ -98,9 +88,7 @@ const Navbar = () => {
                   <Link 
                     key={item.name} 
                     to={item.href} 
-                    className={`text-lg font-medium transition-colors ${
-                      isActive(item.href) ? 'text-yellow-400' : 'text-white hover:text-gray-300'
-                    } ${item.name === 'Relax' ? 'hover:text-fuchsia-500 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.8)]' : ''}`}
+                    className={`text-lg font-medium transition-colors whitespace-nowrap ${isActive(item.href) ? 'text-yellow-400' : 'text-white hover:text-gray-300'}`}
                   >
                     {item.name}
                   </Link>
@@ -109,55 +97,43 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center ml-4 gap-4">
+          {/* 3. GRUPO DERECHA (Buscador/Login) */}
+          <div className="hidden md:flex items-center gap-4 shrink-0">
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <MagnifyingGlassIcon className="size-5 text-gray-400" />
               </div>
-
               <input
                 onChange={busqueda}
                 value={buscar}
                 type="text"
-                placeholder="Buscar películas..."
-                className="block w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 placeholder:text-gray-400 focus:ring-2 focus:ring-white md:text-sm"
+                placeholder="Buscar..."
+                className="block w-32 lg:w-64 rounded-full border-0 bg-white/10 py-1.5 pl-10 pr-4 text-white ring-1 ring-white/20 focus:ring-2 focus:ring-white md:text-sm transition-all"
               />
             </div>
 
             {user ? (
-              <div className="flex items-center gap-3">
-                <button
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    navigate("/login");
-                  }}
-                >
-                  Cerrar sesion
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="text-white hover:text-yellow-400"
+              <button
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition text-sm whitespace-nowrap"
+                onClick={() => { localStorage.removeItem("token"); localStorage.removeItem("user"); navigate("/login"); }}
               >
-                Iniciar sesión
+                Salir
+              </button>
+            ) : (
+              <Link to="/login" className="text-white hover:text-yellow-400 text-sm whitespace-nowrap">
+                Login
               </Link>
             )}
           </div>
+
         </div> 
       </div> 
 
+      {/* Menú Móvil */}
       <DisclosurePanel className="md:hidden bg-black/90">
         <div className="space-y-1 px-2 pt-2 pb-3">
           {navigation.map((item) => (
-            <DisclosureButton
-              key={item.name}
-              as={Link}
-              to={item.href} 
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white"
-            >
+            <DisclosureButton key={item.name} as={Link} to={item.href} className="block rounded-md px-3 py-2 text-base font-medium text-gray-300">
               {item.name}
             </DisclosureButton>
           ))}
