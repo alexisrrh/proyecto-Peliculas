@@ -13,7 +13,8 @@ from flask_jwt_extended import (
 )
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_mail import Mail, Message
+
+import requests
 import secrets
 from models import db, User, Pelicula, Favorito, ArcadeScore, PasswordResetToken
 from datetime import datetime, timezone, timedelta
@@ -29,15 +30,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USE_TLS"] = False
-app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_TIMEOUT"] = 15
-app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
-mail = Mail(app)
+
 db.init_app(app)
 MIGRATE = Migrate(app, db)
 CORS(
@@ -63,6 +57,7 @@ admin.add_view(ModelView(ArcadeScore, db.session))
 def home():
     return jsonify({"msg": "API funcionando"}), 200
 
+
 @app.route("/forgot-password", methods=["POST"])
 def forgot_password():
     body = request.get_json()
@@ -76,7 +71,9 @@ def forgot_password():
     ).scalar_one_or_none()
 
     if not user:
-        return jsonify({"msg": "Si el correo existe, enviaremos instrucciones"}), 200
+        return jsonify({
+            "msg": "Si el correo existe, enviaremos instrucciones"
+        }), 200
 
     token = secrets.token_urlsafe(32)
 
@@ -92,13 +89,11 @@ def forgot_password():
 
     reset_link = f"https://vhsflix.vercel.app/reset-password/{token}"
 
-    msg = Message(
-        "Recuperar clave VHSFLIX",
-        sender=app.config["MAIL_USERNAME"],
-        recipients=[email]
-    )
-
-    msg.body = f"""
+    email_data = {
+        "from": "VHSFLIX <onboarding@resend.dev>",
+        "to": [email],
+        "subject": "Recuperar clave VHSFLIX",
+        "text": f"""
 Hola {user.nombre},
 
 Haz clic en este enlace para recuperar tu clave:
@@ -109,13 +104,27 @@ Este enlace caduca en 30 minutos.
 
 Si no solicitaste esto, ignora este correo.
 """
+    }
+
     try:
-        mail.send(msg)
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                "Content-Type": "application/json"
+            },
+            json=email_data
+        )
+
+        if response.status_code >= 400:
+            return jsonify({
+                "msg": "No se pudo enviar el correo",
+                "error": response.text
+            }), 500
 
     except Exception as e:
-        db.session.rollback()
         return jsonify({
-            "msg": "No se pudo enviar el correo",
+            "msg": "Error enviando correo",
             "error": str(e)
         }), 500
 
