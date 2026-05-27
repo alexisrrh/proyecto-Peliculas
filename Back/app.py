@@ -13,7 +13,8 @@ from flask_jwt_extended import (
 )
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-
+from flask_mail import Mail, Message
+import secrets
 from models import db, User, Pelicula, Favorito, ArcadeScore
 
 load_dotenv()
@@ -28,7 +29,13 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
+mail = Mail(app)
 db.init_app(app)
 MIGRATE = Migrate(app, db)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -46,6 +53,45 @@ admin.add_view(ModelView(ArcadeScore, db.session))
 @app.route("/")
 def home():
     return jsonify({"msg": "API funcionando"}), 200
+
+@app.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    body = request.get_json()
+    email = body.get("email")
+
+    if not email:
+        return jsonify({"msg": "Email requerido"}), 400
+
+    user = db.session.execute(
+        select(User).where(User.email == email)
+    ).scalar_one_or_none()
+
+    if not user:
+        return jsonify({"msg": "Si el correo existe, enviaremos instrucciones"}), 200
+
+    token = secrets.token_urlsafe(32)
+
+    reset_link = f"http://localhost:5173/reset-password/{token}"
+
+    msg = Message(
+        "Recuperar clave VHSFLIX",
+        sender=app.config["MAIL_USERNAME"],
+        recipients=[email]
+    )
+
+    msg.body = f"""
+Hola {user.nombre},
+
+Haz clic en este enlace para recuperar tu clave:
+
+{reset_link}
+
+Si no solicitaste esto, ignora este correo.
+"""
+
+    mail.send(msg)
+
+    return jsonify({"msg": "Correo de recuperación enviado"}), 200
 
 @app.route('/user', methods=['GET'])
 def get_user():

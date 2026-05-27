@@ -19,6 +19,7 @@ flask-jwt-extended = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 flask-cors = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.14"
