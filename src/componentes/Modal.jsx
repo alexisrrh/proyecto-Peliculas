@@ -24,6 +24,26 @@ const API_URL = import.meta.env.VITE_API_URL;
     ], [state]);
 
     const pelicula = todasLasPeliculas.find((item) => item.id === parseInt(id));
+    const comentariosCombinados = [
+  ...comentariosApp.map((comentario) => ({
+    id: `app-${comentario.id}`,
+    author: comentario.user?.nombre || "Usuario",
+    avatar: comentario.user?.avatar,
+    text: comentario.texto,
+    likes: null,
+    source: "VHSFLIX",
+    createdAt: comentario.created_at,
+  })),
+  ...comentarios.map((comentario, index) => ({
+    id: `yt-${index}`,
+    author: comentario.author,
+    avatar: comentario.avatar,
+    text: comentario.text,
+    likes: comentario.likes,
+    source: "YouTube",
+    createdAt: comentario.publishedAt,
+  })),
+];
 
     useEffect(() => {
         if (!id) return;
@@ -96,8 +116,10 @@ useEffect(() => {
 }, [pelicula?.id]);
 
 async function enviarComentario() {
-  const token = localStorage.getItem("token");
-
+ const token =
+  localStorage.getItem("access_token") ||
+  localStorage.getItem("token");
+  console.log("TOKEN:", token);
   if (!token) {
     alert("Debes iniciar sesión");
     return;
@@ -195,57 +217,16 @@ return (
           </p>
         </div>
 
-        <div className="p-5 md:p-7 border-t border-white/10 bg-zinc-950/80">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-white font-black text-xl">
-              Comentarios del trailer
-            </h3>
+   <div className="p-5 md:p-7 border-t border-white/10 bg-zinc-950/80">
+  <div className="flex items-center justify-between mb-4">
+    <h3 className="text-white font-black text-xl">
+      Comentarios
+    </h3>
 
-            <span className="text-xs text-zinc-500">
-              {comentarios.length} comentarios
-            </span>
-          </div>
-
-          {loadingComentarios ? (
-            <p className="text-zinc-400 text-sm">Cargando comentarios...</p>
-          ) : comentarios.length > 0 ? (
-            <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scroll">
-              {comentarios.map((comentario, index) => (
-                <div
-                  key={index}
-                  className="flex gap-3 bg-white/5 p-3 rounded-xl border border-white/10"
-                >
-                  <img
-                    src={comentario.avatar}
-                    alt={comentario.author}
-                    className="w-9 h-9 rounded-full object-cover"
-                  />
-
-                  <div className="flex-1">
-                    <p className="text-white text-sm font-bold">
-                      {comentario.author}
-                    </p>
-
-                    <p className="text-zinc-300 text-sm leading-relaxed mt-1 line-clamp-3">
-                      {comentario.text}
-                    </p>
-
-                    <p className="text-zinc-500 text-xs mt-2">
-                      👍 {comentario.likes}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-zinc-500 text-sm">
-              No hay comentarios disponibles.
-            </p>
-          )}
-          <div className="mt-8 border-t border-white/10 pt-6">
-  <h3 className="text-white text-xl font-black mb-4">
-    Comentarios VHSFLIX
-  </h3>
+    <span className="text-xs text-zinc-500">
+      {comentariosCombinados.length} comentarios
+    </span>
+  </div>
 
   <div className="flex gap-3 mb-5">
     <input
@@ -265,38 +246,52 @@ return (
     </button>
   </div>
 
-  <div className="space-y-3 max-h-72 overflow-y-auto custom-scroll">
-    {comentariosApp.map((comentario) => (
-      <div
-        key={comentario.id}
-        className="bg-white/5 border border-white/10 rounded-xl p-4"
-      >
-        <div className="flex items-center gap-3 mb-2">
+  {loadingComentarios ? (
+    <p className="text-zinc-400 text-sm">Cargando comentarios...</p>
+  ) : comentariosCombinados.length > 0 ? (
+    <div className="space-y-3 max-h-72 overflow-y-auto pr-2 custom-scroll">
+      {comentariosCombinados.map((comentario) => (
+        <div
+          key={comentario.id}
+          className="flex gap-3 bg-white/5 p-3 rounded-xl border border-white/10"
+        >
           <img
-            src={comentario.user?.avatar}
-            alt=""
-            className="w-10 h-10 rounded-full object-cover"
+            src={comentario.avatar}
+            alt={comentario.author}
+            className="w-9 h-9 rounded-full object-cover"
           />
 
-          <div>
-            <p className="text-white font-bold text-sm">
-              {comentario.user?.nombre}
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <p className="text-white text-sm font-bold">
+                {comentario.author}
+              </p>
+
+              <span className="text-[10px] text-yellow-400 border border-yellow-400/30 px-2 py-0.5 rounded-full">
+                {comentario.source}
+              </span>
+            </div>
+
+            <p className="text-zinc-300 text-sm leading-relaxed mt-1">
+              {comentario.text}
             </p>
 
-            <p className="text-zinc-500 text-xs">
-              {new Date(comentario.created_at).toLocaleString()}
+            <p className="text-zinc-500 text-xs mt-2">
+              {comentario.likes !== null
+                ? `👍 ${comentario.likes}`
+                : "Comentario de la app"}
             </p>
           </div>
         </div>
-
-        <p className="text-zinc-300 text-sm">
-          {comentario.texto}
-        </p>
-      </div>
-    ))}
-  </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-zinc-500 text-sm">
+      No hay comentarios disponibles.
+    </p>
+  )}
 </div>
-        </div>
+   
       </div>
     </div>
   </div>
