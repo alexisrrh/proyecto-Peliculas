@@ -22,6 +22,27 @@ load_dotenv()
 
 app = Flask(__name__)
 
+@app.after_request
+def add_cors_headers(response):
+    origin = request.headers.get("Origin")
+
+    allowed_origins = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "https://vhsflix.vercel.app"
+    ]
+
+    if origin in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Vary"] = "Origin"
+
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+
+    return response
+
+
 db_url = os.getenv("SQLALCHEMY_DATABASE_URI")
 if db_url and db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
@@ -34,18 +55,7 @@ app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 
 db.init_app(app)
 MIGRATE = Migrate(app, db)
-CORS(
-    app,
-    resources={r"/*": {"origins": [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        "https://vhsflix.vercel.app"
-    ]}},
-    supports_credentials=False,
-    allow_headers=["Content-Type", "Authorization"],
-    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-)
+CORS(app)
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
