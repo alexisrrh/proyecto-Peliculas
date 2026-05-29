@@ -38,16 +38,15 @@ CORS(
     app,
     resources={r"/*": {"origins": [
         "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
         "https://vhsflix.vercel.app"
     ]}},
-    supports_credentials=True,
+    supports_credentials=False,
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )
-@app.before_request
-def handle_options():
-    if request.method == "OPTIONS":
-        return jsonify({"msg": "ok"}), 200
+
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
